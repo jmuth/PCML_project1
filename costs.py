@@ -10,6 +10,7 @@ def compute_mse(y, tx, beta):
     mse = e.dot(e) / (2 * len(e))
     return mse
 
+
 def compute_rmse(y, tx, beta):
     """ compute the loss by rmse 
     """

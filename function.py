@@ -45,9 +45,25 @@ def least_squares_SGD(y, tx, gamma, max_iters):
     :param max_iters:
     :return:
     """
+    # TODO: we have to find a good way to choose initial weight, maybe something random...
+    initial_w = np.zeros(tx.shape[1])
+    # TODO: choose a batch size
+    batch_size = 100
 
-    raise NotImplementedError
+    ws = [initial_w]
+    losses = []
+    w = initial_w
 
+    for n_iter in range(max_iters):
+        grad = compute_stoch_gradient(y, tx, w, batch_size)
+        loss = compute_mse(y, tx, w)
+        w = w - (gamma * grad)
+        ws.append(w)
+        losses.append(loss)
+        print("Gradient Descent({bi}/{ti}): loss={l}, w0={w0}, w1={w1}".format(
+            bi=n_iter, ti=max_iters - 1, l=loss, w0=w[0], w1=w[1]))
+
+    return losses, ws
 
 
 def least_squares(y, tx):
@@ -69,7 +85,6 @@ def least_squares(y, tx):
     loss = compute_mse(y, tx, w)
 
     return loss, w
-
 
 
 def ridge_regression(y, tx, lambda_):
@@ -95,7 +110,6 @@ def ridge_regression(y, tx, lambda_):
     return w_star
 
 
-
 def logistic_regression(y, tx, gamma,max_iters):
     """
     Logistic regression using gradient descent or SGD
@@ -106,7 +120,6 @@ def logistic_regression(y, tx, gamma,max_iters):
     :return:
     """
     raise NotImplementedError
-
 
 
 def reg_logistic_regression(y, tx, lambda_, gamma, max_iters):
