@@ -2,12 +2,13 @@
 """A function to compute the cost."""
 
 import numpy as np
+from helpers import *
 
 
 def compute_gradient(y, tx, w):
     """Compute the gradient
     """
-    e = np.array(compute_e(y, tx, w))
+    e = y - tx.dot(w)
     n = len(e)
     tx_transposed = np.transpose(tx)
     grad = np.dot(tx_transposed, e)

@@ -24,7 +24,7 @@ def least_squares_GD(y, tx, gamma, max_iters):
     for n_iter in range(max_iters):
         # compute gradient and loss
         grad = compute_gradient(y, tx, w)
-        loss = compute_mse(y, tx, w)
+        loss = compute_loss(y, tx, w)
 
         # update w by gradient
         w = w - (gamma * grad)
@@ -56,7 +56,7 @@ def least_squares_SGD(y, tx, gamma, max_iters):
 
     for n_iter in range(max_iters):
         grad = compute_stoch_gradient(y, tx, w, batch_size)
-        loss = compute_mse(y, tx, w)
+        loss = compute_loss(y, tx, w)
         w = w - (gamma * grad)
         ws.append(w)
         losses.append(loss)
@@ -82,7 +82,7 @@ def least_squares(y, tx):
         raise ValueError('Matrix X^TX is not invertible')
 
     w = np.matrix.dot(np.matrix.dot(inv_xx, np.matrix.transpose(tx)), y)
-    loss = compute_mse(y, tx, w)
+    loss = compute_loss(y, tx, w)
 
     return loss, w
 

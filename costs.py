@@ -1,17 +1,29 @@
 # -*- coding: utf-8 -*-
-"""A function to compute the cost."""
+"""a function used to compute the loss."""
 
 import numpy as np
 
 
-def compute_mse(y, tx, beta):
-    """compute the loss by mse."""
-    e = y - tx.dot(beta)
-    mse = e.dot(e) / (2 * len(e))
-    return mse
+def calculate_mse(e):
+    """Calculate the mse for vector e."""
+    return 1/2*np.mean(e**2)
 
 
-def compute_rmse(y, tx, beta):
-    """ compute the loss by rmse 
+def calculate_mae(e):
+    """Calculate the mae for vector e."""
+    return np.mean(np.abs(e))
+
+def calculate_rmse(e):
+    """Calculate the rmse for vector e"""
+    return np.sqrt(2* calculate_mse(e))
+
+
+def compute_loss(y, tx, w):
+    """Calculate the loss.
+
+    You can calculate the loss using mse or mae.
     """
-    return np.sqrt(2 * compute_mse(y, tx, beta))
+    e = y - tx.dot(w)
+    # return calculate_mse(e)
+    # return calculate_mae(e)
+    return calculate_rmse(e)
