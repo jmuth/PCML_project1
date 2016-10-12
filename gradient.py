@@ -10,10 +10,7 @@ def compute_gradient(y, tx, w):
     """
     e = y - tx.dot(w)
     n = len(e)
-    tx_transposed = np.transpose(tx)
-    grad = np.dot(tx_transposed, e)
-    grad = - grad / n
-    
+    grad = -(tx.T @ e) / n
     return grad
 
 

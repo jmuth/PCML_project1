@@ -23,6 +23,10 @@ def load_csv_data(data_path, sub_sample=False):
 
     return yb, input_data, ids
 
+def load_header(data_path):
+    label = np.genfromtxt(data_path, delimiter=",", skip_header=0, max_rows=1, dtype= str)
+    return label
+
 
 def predict_labels(weights, data):
     """Generates class predictions given weights, and a test data matrix"""
