@@ -101,8 +101,11 @@ def logistic_regression(y, tx, gamma = 0.01,max_iters = 10000):
     :param max_iters:
     :return:
     """
+    # init parameters
     threshold = 1e-8
     losses = []
+    # build w
+    w = np.zeros((tx.shape[1], 1))
     # start the logistic regression
     for iter in range(max_iter):
         # get loss and update w.
@@ -133,7 +136,7 @@ def one_step_logistic_regression(y, tx ,w , gamma):
     return loss, w
 
 
-def reg_logistic_regression(y, tx, lambda_, gamma, max_iters):
+def reg_logistic_regression(y, tx, lambda_ = 0.01, gamma = 0.01, max_iters = 10000):
     """
     Regularized logistic regression using gradient descent or SGD
     :param y:
@@ -143,5 +146,40 @@ def reg_logistic_regression(y, tx, lambda_, gamma, max_iters):
     :param max_iters:
     :return:
     """
-    raise NotImplementedError
+
+    # init parameters
+    threshold = 1e-8
+    losses = []
+
+    # build w
+    w = np.zeros((tx.shape[1], 1))
+
+    # start the logistic regression
+    for iter in range(max_iter):
+        # get loss and update w.
+        loss, w = learning_by_penalized_gradient(y, tx, w, alpha, lambda_)
+        # log info
+        if iter % 500 == 0:
+            print("Current iteration={i}, the loss={l}".format(i=iter, l=loss))
+        # converge criteria
+        losses.append(loss)
+        if len(losses) > 1 and np.abs(losses[-1] - losses[-2]) < threshold:
+            break
+    # visualization
+    print("The loss={l}".format(l=calculate_loss(y, tx, w)))
+    return loss, w
+
+def one_step_reg_logistic_regression(y, tx, w, alpha, lambda_):
+    """
+    Do one step of gradient descent, using the penalized logistic regression.
+    Return the loss and updated w.
+    """
+    penalty = lambda_ * (w.T @ w)
+    
+    loss = calculate_loss(y, tx, w) + penalty
+    grad = calculate_gradient(y, tx, w)
+    hessian = calculate_hessian(y, tx, w)
+
+    w = w - alpha * np.linalg.inv(hessian) @ grad
+    return loss, w
 
