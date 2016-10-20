@@ -45,7 +45,7 @@ def least_squares_SGD(y, tx, gamma, max_iters):
         grad = compute_stoch_gradient(y, tx, w, batch_size)
         w = w - (gamma * grad)
 
-    loss = calculate_loss(y, tx, w)
+    loss = calculate_loss(y, tx, w, method="rmse")
     return loss, w
 
 

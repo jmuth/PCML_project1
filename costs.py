@@ -29,21 +29,32 @@ def calculate_negative_log_likelihood(y, tx, w):
     # print("tx", tx.shape)
     # print("w", w.shape)
     for i in range(tx.shape[0]):
-        exp = math.exp(tx[i] @ w)
+        try:
+            exp = math.exp(tx[i] @ w) 
+        except OverflowError:
+            print("Calculation failed!", tx[i] @ w)
+            raise
+        
         log_n = np.log(1 + exp)
         yxw = y[i] * tx[i].T @ w
         L += log_n - yxw
         
     return L
 
-def calculate_loss(y, tx, w):
+def calculate_loss(y, tx, w, method="log"):
     """Calculate the loss.
 
     Calculate loss using MSE, MAE, RMSE or Neg Log Likelihood.
     (The last choice is our for this project)
     """
-    # e = y - tx.dot(w)
+    e = y - tx.dot(w)
     # return calculate_mse(e)
     # return calculate_mae(e)
     # return calculate_rmse(e)
-    return calculate_negative_log_likelihood(y, tx, w)
+    if(method=="log"):
+        return calculate_negative_log_likelihood(y, tx, w)
+    elif(method=="rmse"):
+        return calculate_rmse(e)
+
+
+
