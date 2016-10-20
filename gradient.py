@@ -2,6 +2,7 @@
 """A function to compute the cost."""
 
 import numpy as np
+import math
 from helpers import *
 
 
@@ -27,6 +28,12 @@ def compute_stoch_gradient(y, tx, w, batch_size):
 def calculate_gradient_sigmoid(y, tx, w):
     """compute the gradient of loss with sigmoid function.
     """
+    # from the various origin of codes put together, sometimes "y" comes as a
+    # vector, sometimes as a one-line matrix
+    # this test force it to be one-line matrix
+    if(y.ndim == 1):
+        y = y[:, np.newaxis]
+    
     grad = tx.T @ (np.subtract(sigmoid(tx @ w),y))
     return grad
 

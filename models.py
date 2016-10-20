@@ -1,5 +1,6 @@
 # Implementation of the 6 ML methods
 import numpy as np
+from costs import calculate_loss
 from costs import *
 from gradient import *
 
@@ -22,7 +23,7 @@ def least_squares_GD(y, tx, gamma, max_iters):
         grad = compute_gradient(y, tx, w)
         w = w - (gamma * grad)
 
-    loss = compute_loss(y, tx, w)
+    loss = calculate_loss(y, tx, w)
     return loss, w
 
 
@@ -44,7 +45,7 @@ def least_squares_SGD(y, tx, gamma, max_iters):
         grad = compute_stoch_gradient(y, tx, w, batch_size)
         w = w - (gamma * grad)
 
-    loss = compute_loss(y, tx, w)
+    loss = calculate_loss(y, tx, w)
     return loss, w
 
 
@@ -64,7 +65,7 @@ def least_squares(y, tx):
         raise ValueError('Matrix X^TX is not invertible')
 
     w = np.matrix.dot(np.matrix.dot(inv_xx, np.matrix.transpose(tx)), y)
-    loss = compute_loss(y, tx, w)
+    loss = calculate_loss(y, tx, w)
 
     return loss, w
 
@@ -87,7 +88,7 @@ def ridge_regression(y, tx, lambda_):
         raise ValueError("Matrix X^TX not invertible")
 
     w = inversed @ tx.T @ y
-    loss = compute_loss(y, tx, w)
+    loss = calculate_loss(y, tx, w)
 
     return loss, w
 
@@ -141,10 +142,10 @@ def reg_logistic_regression(y, tx, lambda_ = 0.01, gamma = 0.01, max_iters = 100
     Regularized logistic regression using gradient descent or SGD
     :param y:
     :param tx:
-    :param lambda_:
-    :param gamma:
+    :param lambda_: regularisation parameter
+    :param gamma: step size of gradient descent
     :param max_iters:
-    :return:
+    :return: loss, weights
     """
 
     # init parameters
@@ -155,9 +156,9 @@ def reg_logistic_regression(y, tx, lambda_ = 0.01, gamma = 0.01, max_iters = 100
     w = np.zeros((tx.shape[1], 1))
 
     # start the logistic regression
-    for iter in range(max_iter):
+    for iter in range(max_iters):
         # get loss and update w.
-        loss, w = learning_by_penalized_gradient(y, tx, w, alpha, lambda_)
+        loss, w = one_step_reg_logistic_regression(y, tx, w, lambda_, gamma)
         # log info
         if iter % 500 == 0:
             print("Current iteration={i}, the loss={l}".format(i=iter, l=loss))
@@ -169,17 +170,40 @@ def reg_logistic_regression(y, tx, lambda_ = 0.01, gamma = 0.01, max_iters = 100
     print("The loss={l}".format(l=calculate_loss(y, tx, w)))
     return loss, w
 
-def one_step_reg_logistic_regression(y, tx, w, alpha, lambda_):
+def one_step_reg_logistic_regression(y, tx, w, lambda_, gamma):
     """
     Do one step of gradient descent, using the penalized logistic regression.
     Return the loss and updated w.
+    :param y:
+    :param tx:
+    :param lambda_: regularisation parameter
+    :param gamma: step size of gradient descent
+    :return: loss, weights
     """
     penalty = lambda_ * (w.T @ w)
     
     loss = calculate_loss(y, tx, w) + penalty
-    grad = calculate_gradient(y, tx, w)
+    grad = calculate_gradient_sigmoid(y, tx, w)
     hessian = calculate_hessian(y, tx, w)
 
-    w = w - alpha * np.linalg.inv(hessian) @ grad
+    # print("debug step")
+    # print("w before", w.shape)
+    # print("hessian", hessian.shape)
+    # print("grad", grad.shape)
+    # print("gamma", gamma)
+    w = w - gamma * np.linalg.inv(hessian) @ grad
+    # print("w after", w.shape)
     return loss, w
+
+
+
+
+
+
+
+
+
+
+
+
 
