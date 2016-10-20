@@ -17,13 +17,30 @@ def calculate_rmse(e):
     """Calculate the rmse for vector e"""
     return np.sqrt(2* calculate_mse(e))
 
+def calculate_negative_log_likelihood(y, tx, w):
+    """compute the cost by negative log likelihood."""
+    # ***************************************************
+    # INSERT YOUR CODE HERE
+    # TODO
+    # ***************************************************
+    L = 0
+    for i in range(x.shape[0]):
+        exp = math.exp(tx[i] @ w)
+        log_n = np.log(1 + exp)
+        yxw = y[i] * tx[i].T @ w
+        L += log_n - yxw
+        
+    return L
+
 
 def compute_loss(y, tx, w):
     """Calculate the loss.
 
-    Calculate loss using RMSE
+    Calculate loss using MSE, MAE, RMSE or Neg Log Likelihood.
+    (The last choice is our for this project)
     """
-    e = y - tx.dot(w)
+    # e = y - tx.dot(w)
     # return calculate_mse(e)
     # return calculate_mae(e)
-    return calculate_rmse(e)
+    # return calculate_rmse(e)
+    return calculate_negative_log_likelihood(y, tx, w)
