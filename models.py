@@ -160,7 +160,7 @@ def reg_logistic_regression(y, tx, lambda_ = 0.01, gamma = 0.01, max_iters = 100
         # get loss and update w.
         loss, w = one_step_reg_logistic_regression(y, tx, w, lambda_, gamma)
         # log info
-        if iter % 500 == 0:
+        if iter % 100 == 0:
             print("Current iteration={i}, the loss={l}".format(i=iter, l=loss))
         # converge criteria
         losses.append(loss)
@@ -189,6 +189,7 @@ def one_step_reg_logistic_regression(y, tx, w, lambda_, gamma):
     # print("debug step")
     # print("w before", w.shape)
     # print("hessian", hessian.shape)
+    # print(hessian)
     # print("grad", grad.shape)
     # print("gamma", gamma)
     w = w - gamma * np.linalg.inv(hessian) @ grad
