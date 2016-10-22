@@ -23,15 +23,17 @@ def newton_method(y, x, initial_w, max_iters):
 def sigmoid(t):
     """apply sigmoid function on t."""
     exp_t = np.exp(t)
-    if np.any(np.isinf(exp_t)):
-        # if exp_t is way too large, exp_t approximate to 1
-        if isinstance(exp_t, int): 
+    res = exp_t / (1 + exp_t)
+    # if t is a number and exp_t overflows,
+    # expt_t / (1 + exp_t) approximates to 1
+    if isinstance(exp_t, int):
+        if np.any(np.isinf(exp_t)): 
             print('int overflow')
-            return 1 / 2   # exp_t = 1
-        else:
-            # replace inf with 1
-            exp_t[np.isinf(exp_t)] = 1
-    return exp_t / (1 + exp_t)
+            return 1    # inf / (1 + inf)
+    else:  # i is a vector
+        # after the division, inf turns to nan
+        res[np.isnan(res)] = 1
+    return res 
 
 
 def calculate_gradient(y, tx, w):
