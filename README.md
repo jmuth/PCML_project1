@@ -17,6 +17,6 @@ We will analyze the provided data set in order to understand its features and to
 
 With k-cross validation method, we will define which parameters are the best for each method and, afterward, which method is the best.
 
-At the end, our predictions will be compared agains the other team ones in a [kaggle competition]{https://inclass.kaggle.com/c/epfml-project-1}.
+At the end, our predictions will be compared agains the other team ones in a [kaggle competition](https://inclass.kaggle.com/c/epfml-project-1).
 
 
