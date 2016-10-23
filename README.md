@@ -1,7 +1,6 @@
-# PCML_project1
-Project 1 of PCML course, EPFL 2016
+# Project 1 of PCML course, EPFL 2016
 
-Group 17: 
+## Group 17: 
 
 Joachim Muth, SCIPER 214757, joachim.muth@epfl.ch 
 
