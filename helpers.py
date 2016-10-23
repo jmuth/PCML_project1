@@ -41,3 +41,14 @@ def batch_iter(y, tx, batch_size, num_batches=None, shuffle=True):
         end_index = min((batch_num + 1) * batch_size, data_size)
         if start_index != end_index:
             yield shuffled_y[start_index:end_index], shuffled_tx[start_index:end_index]
+
+
+def build_poly(x, degree):
+    """polynomial basis functions for input data x, for j=0 up to j=degree."""
+    
+    #create the matrix tx
+    tx = np.ones((x.shape[0], degree+1))
+    for i in range(x.shape[0]):
+        for j in range(degree+1):
+            tx[i, j] = np.power(x[i],j)
+    return tx

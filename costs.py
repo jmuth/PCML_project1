@@ -50,13 +50,13 @@ def calculate_loss(y, tx, w, method="log"):
     Calculate loss using MSE, MAE, RMSE or Neg Log Likelihood.
     (The last choice is our for this project)
     """
-    e = y - tx.dot(w)
     # return calculate_mse(e)
     # return calculate_mae(e)
     # return calculate_rmse(e)
     if(method=="log"):
         return calculate_negative_log_likelihood(y, tx, w)
     elif(method=="rmse"):
+        e = y - tx.dot(w)
         return calculate_rmse(e)
 
 

@@ -7,7 +7,6 @@ from logistic_regression import *
 def train(n_iters, gamma, precision):
     y, x, ids = load_csv_data('data/train.csv')
     tx = standardize(x)
-
     w = logistic_reg_gd(y, tx, np.zeros(tx.shape[1]), n_iters, gamma, precision)
     print(w)
     return w
