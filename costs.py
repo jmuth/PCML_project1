@@ -29,9 +29,10 @@ def calculate_negative_log_likelihood(y, tx, w):
     # print("tx", tx.shape)
     # print("w", w.shape)
     for i in range(tx.shape[0]):
-        # because of overflow error I'll do some trick here. Instead of computing
-        # the ln(1 + exp(x)), I'll test if x > 700, and if, just discard the +1 and
-        # only use x (very, very small error)
+        # To avoid overflow for big or small x:
+        # if exp(x) >> 1 -> exp(x)+1 ~= exp(x) and then log(exp(x) + 1) ~=x
+        # for x very small, Taylor series of 1st degree is exp(x) ~= 1 + exp(x)
+        # and then log(1 + exp(s)) ≅ log(2 + s) ≅ log(2) + s / 2.
         x = tx[i] @ w
         if (x < 700):
             exp = math.exp(tx[i] @ w)

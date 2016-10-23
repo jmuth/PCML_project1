@@ -44,13 +44,13 @@ def sigmoid(t):
     y = np.zeros((t.shape[0],1))
     for i in range(t.shape[0]):
         # y[i] = math.exp(t[i]) / (1 + math.exp(t[i]))
-        # y[i] = 1 / (1 + math.exp(-t[i]))
+        y[i] = 1 / (1 + math.exp(-t[i]))
 
         # try the "fast sigmoid" function to avoid overflow
         # f(x) = x / (1 + abs(x))
         # print("ti", t[i])
         # print("abs", abs(t[i]))
-        y[i] = (t[i]+1) / (2 + math.fabs(t[i]))
+        # y[i] = (t[i]+1) / (2 + math.fabs(t[i]))
         # print("y", y[i])
 
     return y
