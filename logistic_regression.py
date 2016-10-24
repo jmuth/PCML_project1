@@ -24,15 +24,15 @@ def sigmoid(t):
     """apply sigmoid function on t."""
     exp_t = np.exp(t)
     res = exp_t / (1 + exp_t)
-    # if t is a number and exp_t overflows,
-    # expt_t / (1 + exp_t) approximates to 1
-    if isinstance(exp_t, int):
-        if np.any(np.isinf(exp_t)): 
-            print('int overflow')
-            return 1    # inf / (1 + inf)
-    else:  # i is a vector
-        # after the division, inf turns to nan
-        res[np.isnan(res)] = 1
+    # # if t is a number and exp_t overflows,
+    # # expt_t / (1 + exp_t) approximates to 1
+    # if isinstance(exp_t, int):
+    #     if np.any(np.isinf(exp_t)): 
+    #         print('int overflow')
+    #         return 1    # inf / (1 + inf)
+    # else:  # i is a vector
+    #     # after the division, inf turns to nan
+    #     res[np.isnan(res)] = 1
     return res 
 
 
@@ -60,7 +60,7 @@ def logistic_reg_gd(y, tx, w, max_iter, gamma, threshold):
     previous_loss = 0
     for n_iter in range(max_iter):
         # get loss and update w.
-        loss = calculate_loss(y, tx, w)
+        loss = calculate_loss(y, tx, w, "rmse")
         gradient = calculate_gradient(y, tx, w)
         w = w - gamma * gradient
         if n_iter % 100 == 0:

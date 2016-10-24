@@ -1,6 +1,54 @@
 import numpy as np
 from proj1_helpers import *
 import matplotlib.pyplot as plt
+from logistic_regression import *
+
+def apply_right_model(tx, ids, w0_nomass, w0, w1_nomass, w1, w23_nomass, w23):
+	"""
+	Choose the right model to apply to each data, based on the features
+
+	Params:
+		tx (ndarray): data matrix
+		ids (ndarray): array of ID's we want to predict
+		w (ndarray): array of w matrices to apply to each data
+	Return:
+		ys (ndarray): array with ids and predict y
+	"""
+	pred = []
+
+	for i, x in enumerate(tx):
+			pred.append([ids[i], choose_right_w(x, w0_nomass, w0, w1_nomass, w1, w23_nomass, w23)])
+
+	return np.array(pred)
+
+
+def  pred(x, w):
+	# print("x", x)
+	# print("w", w)
+	# print("x@w", x@w)
+	# print("sigm", sigmoid(x @ w))
+	prob = sigmoid(x @ w)
+	if prob >= 0.5:
+		return 1
+	else:
+		return -1
+
+def choose_right_w(x, w0_nomass, w0, w1_nomass, w1, w23_nomass, w23):
+	if x[22] == 0:
+		if x[0] == -999:
+			return pred(x, w0_nomass)
+		else:
+			return pred(x, w0)
+	elif x[22] == 1:
+		if x[0] == -999:
+			return pred(x, w1_nomass)
+		else:
+			return pred(x, w1)
+	else:
+		if x[0] == -999:
+			return pred(x, w23_nomass)
+		else:
+			return pred(x, w23)
 
 
 

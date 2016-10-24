@@ -45,20 +45,24 @@ def calculate_negative_log_likelihood(y, tx, w):
         
     return L
 
-def calculate_loss(y, tx, w, method="log"):
-    """Calculate the loss.
+# def calculate_loss(y, tx, w, method="log"):
+#     """Calculate the loss.
 
-    Calculate loss using MSE, MAE, RMSE or Neg Log Likelihood.
-    (The last choice is our for this project)
-    """
-    # return calculate_mse(e)
-    # return calculate_mae(e)
-    # return calculate_rmse(e)
-    if(method=="log"):
-        return calculate_negative_log_likelihood(y, tx, w)
-    elif(method=="rmse"):
-        e = y - tx.dot(w)
-        return calculate_rmse(e)
+#     Calculate loss using MSE, MAE, RMSE or Neg Log Likelihood.
+#     (The last choice is our for this project)
+#     """
+#     # return calculate_mse(e)
+#     # return calculate_mae(e)
+#     # return calculate_rmse(e)
+#     if(method=="log"):
+#         return calculate_negative_log_likelihood(y, tx, w)
+#     elif(method=="rmse"):
+#         e = y - tx.dot(w)
+#         return calculate_rmse(e)
+        
+def calculate_loss(y, tx, w):
+    """compute the cost by negative log likelihood."""
+    return (np.sum(np.log(1+np.exp(np.dot(tx,w)))) - np.dot(y.transpose(),np.dot(tx,w)))
 
 
 
