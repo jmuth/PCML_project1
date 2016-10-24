@@ -104,7 +104,7 @@ def ridge_regression(y, tx, lambda_):
     return loss, w
 
 
-def logistic_regression(y, tx, gamma, max_iters):
+def logistic_regression(y, tx, gamma, max_iter=1000):
     """
     Logistic regression using gradient descent 
     we don't use Newton's method because computing hessian
