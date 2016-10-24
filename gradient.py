@@ -7,7 +7,20 @@ from helpers import *
 
 
 def compute_gradient(y, tx, w):
-    """Compute the gradient
+    """
+    Compute the gradient
+    
+    Params:
+        y (ndarray): target variable, usually a column vector
+        tx (ndarray): independent variable matrix
+        w (ndarray): parameter matrix
+    
+    Return:
+        grad (ndarray): gradient for multiple linear regression,
+        under MS
+
+    Equation:
+        dL = - 1 / N * X.T @ (Y - X @ w)
     """
     e = y - tx.dot(w)
     n = len(e)
@@ -16,55 +29,95 @@ def compute_gradient(y, tx, w):
 
 
 def compute_stoch_gradient(y, tx, w, batch_size):
-    """Compute a stochastic gradient for batch data.
+    """
+    Compute a stochastic gradient for batch data.
+    
+    Params:
+        y (ndarray): target variable, usually a column vector
+        tx (ndarray): independent variable matrix
+        w (ndarray): parameter matrix
+        batch_size (int): size of one batch
+    
+    Return:
+        grad (ndarray): gradient for multiple linear regression,
+        under MSE
     """
     stoch_grad = 0
     for minibatch_y, minibatch_tx in batch_iter(y, tx, batch_size):
-        stoch_grad = stoch_grad + compute_gradient(minibatch_y, minibatch_tx, w)
+        stoch_grad += compute_gradient(minibatch_y, minibatch_tx, w)
         
     stoch_grad = stoch_grad / batch_size
     return stoch_grad
 
+
 def calculate_gradient_sigmoid(y, tx, w):
-    """compute the gradient of loss with sigmoid function.
     """
-    # from the various origin of codes put together, sometimes "y" comes as a
-    # vector, sometimes as a one-line matrix
-    # this test force it to be one-line matrix
-    if(y.ndim == 1):
-        y = y[:, np.newaxis]
+    compute the gradient of loss with sigmoid function.
     
-    grad = tx.T @ (np.subtract(sigmoid(tx @ w),y))
-    return grad
+    Params:
+        y (ndarray): target variable, usually a column vector
+        tx (ndarray): independent variable matrix
+        w (ndarray): parameter matrix
+    
+    Return:
+        grad (ndarray): gradient for multiple linear regression,
+        under MSE
+        
+    Equation:
+        dL = X.T @ (sigma(X @ w) - Y)
+    """
+    return tx.T @ (sigmoid(tx @ w) - y)
+
+
 
 def sigmoid(t):
     """apply sigmoid function on t.
-    Apply it to each row of the vecotr given in input
+    
+    Params:
+        t: t could be a number in the case of x[i] @ w,
+           or a vector when called by X @ w
+    
+    Return:
+        sigmoid result of t, a number or a vector
+    
+    Equation:
+        sigmoid(t) = exp(t) / (1 + exp(t))
+
     """
-    y = np.zeros((t.shape[0],1))
-    for i in range(t.shape[0]):
-        # y[i] = math.exp(t[i]) / (1 + math.exp(t[i]))
-        y[i] = 1 / (1 + math.exp(-t[i]))
+    exp_t = np.exp(t)
+    res = exp_t / (1 + exp_t)
+    # if t is a number and exp_t overflows,
+    # expt_t / (1 + exp_t) approximates to 1
+    if isinstance(exp_t, int):
+        if np.any(np.isinf(exp_t)): 
+            print('int overflow')
+            return 1    # inf / (1 + inf)
+    else:  # i is a vector
+        # after the division, inf turns to nan
+        res[np.isnan(res)] = 1
+    return res
 
-        # try the "fast sigmoid" function to avoid overflow
-        # f(x) = x / (1 + abs(x))
-        # print("ti", t[i])
-        # print("abs", abs(t[i]))
-        # y[i] = (t[i]+1) / (2 + math.fabs(t[i]))
-        # print("y", y[i])
-
-    return y
 
 def calculate_hessian(y, tx, w):
-    """return the hessian of the loss function.
+    """
+    Params:
+        y (ndarray): target variable, usually a column vector
+        tx (ndarray): independent variable matrix
+        w (ndarray): parameter matrix
+    
+    Return:
+        hession (ndarray): consists of second derivates
+    
+    Equation:
+        H = X.T @ S @ X
+        S is a diagnoal matrix with diagnoal entries being 
+        sigmoid(Xn.T @ w)[1 - sigmoid(Xn.T @ w)]
     """
     sigmo = sigmoid(tx @ w)
-    one_vec = np.ones((len(sigmo),1))
-    minus_sigmo = (np.subtract(one_vec,sigmo))
+    one_vec = np.ones(len(sigmo))
+    minus_sigmo = one_vec - sigmo
     S_array = np.multiply(sigmo, minus_sigmo)
-    S = np.diag(S_array[:,0])
+    S = np.diag(S_array)
 
-    H = tx.T @ S @ tx
-    return H
-
+    return tx.T @ S @ tx
 
