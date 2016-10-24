@@ -1,3 +1,12 @@
+# latex
+*.aux
+*.log
+*.out
+*.syntex.gz
+*.blg
+
+
+
 test.csv
 train.csv
 sample-submission.csv
