@@ -58,7 +58,7 @@ def cross_validation(y, tx, k_fold, seed, model_func, *args, **kwargs):
         losses.append(loss_train)
         accuracies.append(accuracy)
     
-    return np.mean(ws), np.mean(losses), np.mean(accuracies)
+    return np.mean(losses), np.mean(accuracies)
 
 
 def validation_accuracy(y_test, tx_test, w, func_name):
