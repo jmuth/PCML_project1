@@ -1,7 +1,6 @@
 # Implementation of the 6 ML methods
 import numpy as np
 from costs import calculate_loss
-from costs import *
 from gradient import *
 
 
@@ -126,13 +125,13 @@ def logistic_regression(y, tx, gamma, max_iters):
     w = np.zeros(tx.shape[1])
     
     previous_loss = 0
-    for n_iter in range(max_iter):
+    for n_iter in range(max_iters):
         # get loss and update w.
         loss = calculate_loss(y, tx, w)
-        gradient = compute_gradient(y, tx, w)
+        gradient = calculate_gradient_sigmoid(y, tx, w)
         w = w - gamma * gradient
         
-        if n_iter % 100 == 0:
+        if n_iter % 1000 == 0:
             print("Current iteration={i}, the loss={l}, gradient={g}"
                   .format(i=n_iter, l=loss, g=np.linalg.norm(gradient)))
         # converge criteria
@@ -140,7 +139,6 @@ def logistic_regression(y, tx, gamma, max_iters):
             break
         previous_loss = loss
 
-    print("Final loss={l}".format(l=loss))
     return loss, w
 
 
@@ -169,10 +167,10 @@ def reg_logistic_regression(y, tx, lambda_, gamma, max_iters):
         # get loss and update w.
         penalty = lambda_ * (w.T @ w)
         loss = calculate_loss(y, tx, w) + penalty
-        gradient = compute_gradient(y, tx, w)
+        gradient = calculate_gradient_sigmoid(y, tx, w)
         w = w - gamma * gradient
         
-        if n_iter % 100 == 0:
+        if n_iter % 1000 == 0:
             print("Current iteration={i}, the loss={l}, gradient={g}"
                   .format(i=n_iter, l=loss, g=np.linalg.norm(gradient)))
         # converge criteria
@@ -180,5 +178,4 @@ def reg_logistic_regression(y, tx, lambda_, gamma, max_iters):
             break
         previous_loss = loss
 
-    print("Final loss={l}".format(l=loss))
     return loss, w

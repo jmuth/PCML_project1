@@ -1,4 +1,6 @@
 from costs import *
+from gradient import *
+from helpers import * 
 
 
 def one_round_cross_validation(y, tx, k, k_indices, seed, model_func, *args, **kwargs):
@@ -8,15 +10,16 @@ def one_round_cross_validation(y, tx, k, k_indices, seed, model_func, *args, **k
     tx_test = tx[k_indices[k]]
    
     # find other indices 
-    not_k = np.array([i for i in range(len(y)) if i not in k_indices[k]])
+    not_k = [i for i in range(len(y)) if i not in k_indices[k]]
     y_train = y[not_k]
     tx_train = tx[not_k]
 
     # run model functions 
     loss_tr, w = model_func(y_train, tx_train, *args)
-    loss_te = calculate_loss(y_test, tx_test, w, *args)
-    func_name = 'LS' if model_func.__name__ == 'least_squares' else 'LR'
+    loss_te = calculate_loss(y_test, tx_test, w)
+    func_name = 'log' if model_func.__name__ == 'logistic_regression' else 'LS'
     accuracy = validation_accuracy(y_test, tx_test, w, func_name)
+    print('{} round, train loss {}, test loss {}, accuracy {}'.format(k, loss_tr, loss_te, accuracy))
     return w, loss_tr, loss_te, accuracy 
 
 
@@ -61,12 +64,7 @@ def cross_validation(y, tx, k_fold, seed, model_func, *args, **kwargs):
 
 
 def validation_accuracy(y_test, tx_test, w, func_name):
-    if func_name == 'LR':
-        pred_y = predict_labels(w, tx_test)
-    elif func_name == 'LS':
-        pred_y = tx_test @ w
-        pred_y[pred_y > 0] = 1
-        pred_y[pred_y <= 0] = -1
+    pred_y = predict_labels(w, tx_test, func_name)
     correct_count = 0
     for predict_y, true_y in zip(pred_y, y_test):
          correct_count += predict_y == true_y

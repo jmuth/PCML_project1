@@ -1,15 +1,44 @@
 # -*- coding: utf-8 -*-
 """some helper functions."""
+import csv
 import numpy as np
 
-def standardize(x):
+from gradient import *
+
+def standardize(x, minX = None, rangeX = None):
     """Standardize the original data set.
     Using feature scaling:
     X = (X - Xmin) / (Xmax - Xmin)
     """
-    x  = ((x.T - x.min(1)) / (x.max(1) - x.min(1))).T 
-    tx = np.hstack((np.ones((x.shape[0],1)), x))
-    return tx
+    if minX is None:
+        minX = x.min(0)
+
+    if rangeX is None:
+        rangeX = x.max(0) - x.min(0)
+        rangeX[rangeX==0] = 1
+
+    x  = (x - minX) / rangeX
+    return x, minX, rangeX
+
+#def standardize(x):
+#    """Standardize the original data set.
+#    Using feature scaling:
+#    X = (X - Xmin) / (Xmax - Xmin)
+#    """
+#    x  = (x - x.min(0)) / (x.max(0) - x.min(0))
+#    return x
+
+def build_poly(x, degree):
+    """polynomial basis functions for input data x, for j=0 up to j=degree."""
+    
+    #create the matrix tx
+    poly_res = []
+    for row_x in x:
+        new_row = []
+        for row_i in row_x:   # expand one row to three times its original size
+            new_row += [row_i ** d for d in range(degree + 1)]
+        poly_res.append(new_row)
+    return np.array(poly_res)
 
 
 def batch_iter(y, tx, batch_size, num_batches=None, shuffle=True):
@@ -43,12 +72,84 @@ def batch_iter(y, tx, batch_size, num_batches=None, shuffle=True):
             yield shuffled_y[start_index:end_index], shuffled_tx[start_index:end_index]
 
 
-def build_poly(x, degree):
-    """polynomial basis functions for input data x, for j=0 up to j=degree."""
+def load_csv_data(data_path, sub_sample=False):
+    """
+    Load data from csv files
     
-    #create the matrix tx
-    tx = np.ones((x.shape[0], degree+1))
-    for i in range(x.shape[0]):
-        for j in range(degree+1):
-            tx[i, j] = np.power(x[i],j)
-    return tx
+    Params:
+        data_path (str): file path and name
+        sub_sample (boolean): if returned result is a sample
+    
+    Return:
+        yb (ndarray): binary numeric value of target variable
+        input_data (ndarray): feature matrix
+        ids (ndarray): an array of ids of particles
+    """
+    y = np.genfromtxt(data_path, delimiter=",", skip_header=1, dtype=str, usecols=1)
+    x = np.genfromtxt(data_path, delimiter=",", skip_header=1)
+    ids = x[:, 0].astype(np.int)
+    input_data = x[:, 2:]
+
+    # convert class labels from strings to binary (0,1)
+    yb = np.ones(len(y))
+    yb[np.where(y=='b')] = 0
+    
+    # sub-sample
+    if sub_sample:
+        yb = yb[::50]
+        input_data = input_data[::50]
+        ids = ids[::50]
+
+    return yb, input_data, ids
+
+
+def load_header(data_path):
+    """
+    Load header of specified csv file
+    
+    Params:
+        data_path (str): file path and name
+        
+    Return: 
+        label (ndarray): csv headers
+    """
+    label = np.genfromtxt(data_path, delimiter=",", skip_header=0, max_rows=1, dtype= str)
+    return label
+
+
+def predict_labels(weights, data, method='log'):
+    """
+    Generates class predictions given weights, and a test data matrix
+    
+    Params:
+        weights (ndarray): optimal weight vector obtained by training
+        data (ndarray): test matrix
+    
+    Return:
+        y_pred (ndarray): an array of prediction results
+    """
+    if method == 'log':
+        y_pred = sigmoid(data @ weights)
+    else:
+        y_pred = np.dot(data, weights)
+    y_pred[np.where(y_pred <= 0.5)] = -1
+    y_pred[np.where(y_pred > 0.5)] = 1
+    
+    return y_pred
+
+
+def create_csv_submission(ids, y_pred, name):
+    """
+    Creates an output file in csv format for submission to kaggle
+    
+    Params: 
+        ids (ndarray):event ids associated with each prediction
+        y_pred (ndarray): predicted class labels
+        name (str): string name of .csv output file to be created
+    """
+    with open(name, 'w') as csvfile:
+        fieldnames = ['Id', 'Prediction']
+        writer = csv.DictWriter(csvfile, delimiter=",", fieldnames=fieldnames)
+        writer.writeheader()
+        for r1, r2 in zip(ids, y_pred):
+            writer.writerow({'Id':int(r1),'Prediction':int(r2)})
