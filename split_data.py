@@ -213,3 +213,55 @@ def boxplot_five_number(tx):
 	plt.boxplot(tx)
 	plt.show
 
+def isJet0_nomass(x):
+	return (x[:,22] == 0) & (x[:,0] == -999.)
+
+def isJet0(x):
+	return (x[:,22] == 0) & (x[:,0] == -999.)
+
+def isJet1_nomass(x):
+	return (x[:,22] == 1) & (x[:,0] == -999.)
+
+def isJet1(x):
+	return (x[:,22] == 1) & (x[:,0] == -999.)
+
+def isJet23_nomass(x):
+	return ((x[:,22] == 2) | (x[:,22] == 3)) & (x[:,0] == -999.)
+
+def isJet23(x):
+	return ((x[:,22] == 2) | (x[:,22] == 3)) & (x[:,0] != -999.)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

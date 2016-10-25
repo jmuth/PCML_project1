@@ -131,7 +131,7 @@ def logistic_regression(y, tx, gamma, max_iter=1000):
         gradient = compute_gradient(y, tx, w)
         w = w - gamma * gradient
         
-        if n_iter % 100 == 0:
+        if n_iter % 500 == 0:
             print("Current iteration={i}, the loss={l}, gradient={g}"
                   .format(i=n_iter, l=loss, g=np.linalg.norm(gradient)))
         # converge criteria
@@ -171,7 +171,7 @@ def reg_logistic_regression(y, tx, lambda_, gamma, max_iters):
         gradient = compute_gradient(y, tx, w)
         w = w - gamma * gradient
         
-        if n_iter % 100 == 0:
+        if n_iter % 500 == 0:
             print("Current iteration={i}, the loss={l}, gradient={g}"
                   .format(i=n_iter, l=loss, g=np.linalg.norm(gradient)))
         # converge criteria
