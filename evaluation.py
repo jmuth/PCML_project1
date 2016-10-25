@@ -1,4 +1,5 @@
 from costs import *
+from proj1_helpers import *
 
 
 def one_round_cross_validation(y, tx, k, k_indices, seed, model_func, *args, **kwargs):
@@ -57,7 +58,7 @@ def cross_validation(y, tx, k_fold, seed, model_func, *args, **kwargs):
         losses.append(loss_train)
         accuracies.append(accuracy)
     
-    return ws, losses, accuracies
+    return np.mean(ws), np.mean(losses), np.mean(accuracies)
 
 
 def validation_accuracy(y_test, tx_test, w, func_name):
@@ -76,6 +77,6 @@ def validation_accuracy(y_test, tx_test, w, func_name):
 def test_accuracy(y_test, y_predict):
     y_test[np.where(y_test == 0)] = -1
     acc = (y_predict + y_test)
-    return (1 - np.count_nonzero(acc == 0) / y_predict.shape[0])
+    return 1 - (np.count_nonzero(acc == 0) / y_predict.shape[0])
 
 

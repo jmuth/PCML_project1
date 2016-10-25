@@ -3,6 +3,7 @@ from proj1_helpers import *
 import matplotlib.pyplot as plt
 from logistic_regression import *
 from helpers import *
+from poly import *
 
 def apply_right_model(tx, ids, w0_nomass, w0, w1_nomass, w1, w23_nomass, w23):
 	"""
@@ -278,7 +279,7 @@ def apply_right_model_withoutmass_ridge(testset, \
                   selected_jet23, \
                   min0, min1, min23, \
                   range0, range1, range23, \
-                  w0, w1, w23):
+                  w0, w1, w23, degree0, degree1, degree23):
     y = []
 
     for x_t in testset:
@@ -286,14 +287,17 @@ def apply_right_model_withoutmass_ridge(testset, \
         if isJet0_nomass(x) or isJet0(x):
             pred = x[:, selected_jet0]
             pred, _ , _  = standardize_mean(pred, min0, range0)
+            pred = build_poly(pred, degree0)	
             y.append(predict(pred, w0))
         elif isJet1_nomass(x) or isJet1_nomass(x):
             pred = x[:, selected_jet1]
             pred, _ , _  = standardize_mean(pred, min1, range1)
+            pred = build_poly(pred, degree1)
             y.append(predict(pred, w1))
         else:
             pred= x[:, selected_jet23]
             pred, _ , _  = standardize_mean(pred, min23, range23)
+            pred = build_poly(pred, degree23)
             y.append(predict(pred, w23))
 
 
