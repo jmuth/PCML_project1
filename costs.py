@@ -59,9 +59,12 @@ def calculate_negative_log_likelihood(y, tx, w):
 #     elif(method=="rmse"):
 #         e = y - tx.dot(w)
 #         return calculate_rmse(e)
-        
+
 def calculate_loss(y, tx, w):
     """compute the cost by negative log likelihood."""
+    # print("y", y.shape)
+    # print("tx ", tx.shape)
+    # print("w", w.shape)
     return (np.sum(np.log(1+np.exp(np.dot(tx,w)))) - np.dot(y.transpose(),np.dot(tx,w)))
 
 

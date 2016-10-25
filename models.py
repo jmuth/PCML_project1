@@ -1,6 +1,5 @@
 # Implementation of the 6 ML methods
 import numpy as np
-from costs import calculate_loss
 from costs import *
 from gradient import *
 

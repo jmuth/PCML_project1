@@ -2,14 +2,33 @@
 """some helper functions."""
 import numpy as np
 
-def standardize(x):
+# def standardize(x):
+#     """Standardize the original data set.
+#     Using feature scaling:
+#     X = (X - Xmin) / (Xmax - Xmin)
+#     """    
+#     print("x.min(0).shape", x.min(0).shape)
+#     print("x.min(1).shape", x.min(1).shape)
+#     x  = ((x.T - x.min(1)) / (x.max(1) - x.min(1))).T 
+#     tx = np.hstack((np.ones((x.shape[0],1)), x))
+#     return tx, x.min(1), x.max(1)
+
+
+def standardize(x, minX = None, rangeX = None):
     """Standardize the original data set.
     Using feature scaling:
     X = (X - Xmin) / (Xmax - Xmin)
     """
-    x  = ((x.T - x.min(1)) / (x.max(1) - x.min(1))).T 
-    tx = np.hstack((np.ones((x.shape[0],1)), x))
-    return tx
+    if minX is None:
+        minX = x.min(0)
+
+    if rangeX is None:
+        rangeX = x.max(0) - x.min(0)
+        rangeX[rangeX==0] = 1
+
+    x  = ((x - minX) / rangeX) 
+    # tx = np.hstack((np.ones((x.shape[0],1)), x))
+    return x, minX, rangeX
 
 
 def batch_iter(y, tx, batch_size, num_batches=None, shuffle=True):

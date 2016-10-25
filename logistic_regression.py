@@ -77,8 +77,8 @@ def log_reg_predict(tx, w):
     for x in tx:
         prob = sigmoid(x @ w)
         if prob >= 0.5:
-            print('11')
+            # print('11')
             probs.append(1)
         else:
             probs.append(-1)
-    return probs
+    return np.array(probs)
