@@ -96,11 +96,23 @@ def ridge_regression(y, tx, lambda_):
     first_part = tx.T @ tx
     second_part = lambda_prime * np.identity(tx.shape[1])   # 2N*lamb*Im
     third_part = tx.T @ y
-    optimal_w = np.linalg.solve(first_part+second_part, third_part)
+    w = np.linalg.solve(first_part+second_part, third_part)
     
     loss = calculate_loss(y, tx, w)
 
     return loss, w
+
+# def ridge_regression_GD(y, tx, lambda_, max_iter=10000):
+#     lambda_prime = lambda_ * 2 * len(y)
+
+#     first_part = tx.T @ tx
+#     second_part = lambda_prime * np.identity(tx.shape[1])   # 2N*lamb*Im
+#     third_part = tx.T @ y
+#     optimal_w = np.linalg.solve(first_part+second_part, third_part)
+    
+#     loss = calculate_loss(y, tx, w)
+
+#     return loss, w
 
 
 def logistic_regression(y, tx, gamma, max_iter=1000):

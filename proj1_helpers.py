@@ -65,6 +65,12 @@ def predict_labels(weights, data):
     
     return y_pred
 
+def predict(x, w):
+	pred = x @ w
+	if pred <= 0:
+		return -1
+	else:
+		return 1
 
 def create_csv_submission(ids, y_pred, name):
     """
