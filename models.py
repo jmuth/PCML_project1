@@ -98,7 +98,7 @@ def ridge_regression(y, tx, lambda_):
     third_part = tx.T @ y
     w = np.linalg.solve(first_part+second_part, third_part)
     
-    loss = calculate_loss(y, tx, w)
+    loss = calculate_loss(y, tx, w, "rmse")
 
     return loss, w
 

@@ -273,7 +273,33 @@ def apply_right_model(testset, \
 
 
 
+def apply_right_model_withoutmass_ridge(testset, \
+                  selected_jet0, selected_jet1, \
+                  selected_jet23, \
+                  min0, min1, min23, \
+                  range0, range1, range23, \
+                  w0, w1, w23):
+    y = []
 
+    for x_t in testset:
+        x = np.array([x_t])
+        if isJet0_nomass(x) or isJet0(x):
+            pred = x[:, selected_jet0]
+            pred, _ , _  = standardize_mean(pred, min0, range0)
+            y.append(predict(pred, w0))
+        elif isJet1_nomass(x) or isJet1_nomass(x):
+            pred = x[:, selected_jet1]
+            pred, _ , _  = standardize_mean(pred, min1, range1)
+            y.append(predict(pred, w1))
+        else:
+            pred= x[:, selected_jet23]
+            pred, _ , _  = standardize_mean(pred, min23, range23)
+            y.append(predict(pred, w23))
+
+
+    y = np.array(y)
+    
+    return y
 
 
 

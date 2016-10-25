@@ -74,6 +74,7 @@ def validation_accuracy(y_test, tx_test, w, func_name):
     return correct_count / len(y_test)
 
 def test_accuracy(y_test, y_predict):
+    y_test[np.where(y_test == 0)] = -1
     acc = (y_predict + y_test)
     return (1 - np.count_nonzero(acc == 0) / y_predict.shape[0])
 

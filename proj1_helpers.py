@@ -66,6 +66,7 @@ def predict_labels(weights, data):
     return y_pred
 
 def predict(x, w):
+	
 	pred = x @ w
 	if pred <= 0:
 		return -1

@@ -55,3 +55,14 @@ def bias_variance_decomposition_visualization(degrees, rmse_tr, rmse_te):
     plt.ylabel("error")
     plt.title("Bias-Variance Decomposition")
     plt.savefig("bias_variance")
+
+def plot_features(xt):
+    plt.figure(figsize=(15, 15))
+    
+    rows = (xt.shape[1] / 3) + 1
+    
+    for i in range(xt.shape[1]):
+        plt.subplot(rows, 3, i+1)
+        plt.hist(xt[:,i])
+    
+    plt.show
