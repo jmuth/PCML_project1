@@ -16,6 +16,7 @@ def one_round_cross_validation(y, tx, k, k_indices, seed, model_func, *args, **k
 
     # run model functions 
     loss_tr, w = model_func(y_train, tx_train, *args)
+    print('CV w {}'.format(w))
     loss_te = calculate_loss(y_test, tx_test, w)
     func_name = 'log' if model_func.__name__ == 'logistic_regression' else 'LS'
     accuracy = validation_accuracy(y_test, tx_test, w, func_name)
@@ -67,8 +68,11 @@ def validation_accuracy(y_test, tx_test, w, func_name):
     pred_y = predict_labels(w, tx_test, func_name)
     correct_count = 0
     for predict_y, true_y in zip(pred_y, y_test):
-         correct_count += predict_y == true_y
-    
+        # pred_y belongs to {-1, 1}
+        # y_test belongs to {0, 1}
+        if predict_y == -1 and true_y == 0 or \
+            predict_y == true_y:
+            correct_count += 1
     return correct_count / len(y_test)
 
 
