@@ -20,6 +20,27 @@ def standardize(x, minX = None, rangeX = None):
     x  = (x - minX) / rangeX
     return x, minX, rangeX
 
+def replace_num(x, origin, target):
+    """
+    replace missing values
+
+    Params:
+        origin (int): one value in a feature column that's being replaced
+        target (str): substitute value, e.g. mean, median
+    """
+    origin_ids = np.where(x == origin)
+    x[origin_ids] = np.nan  # facilitate calculating mean
+    if target == 'mean':
+        mean_x = np.nanmean(x, axis=0)
+        x[origin_ids] = np.take(mean_x, origin_ids[1])
+    elif target == 'median':
+        median_x = np.nanmedian(x, axis=0)
+        x[origin_ids] = np.take(median_x, origin_ids[1])
+    else:
+        raise Exception('check target value')
+    return x
+    
+
 #def standardize(x):
 #    """Standardize the original data set.
 #    Using feature scaling:

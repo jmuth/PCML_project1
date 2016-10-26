@@ -16,7 +16,6 @@ def one_round_cross_validation(y, tx, k, k_indices, seed, model_func, *args, **k
 
     # run model functions 
     loss_tr, w = model_func(y_train, tx_train, *args)
-    print('CV w {}'.format(w))
     loss_te = calculate_loss(y_test, tx_test, w)
     func_name = 'log' if model_func.__name__ == 'logistic_regression' else 'LS'
     accuracy = validation_accuracy(y_test, tx_test, w, func_name)
