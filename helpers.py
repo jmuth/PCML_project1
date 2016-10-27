@@ -32,25 +32,22 @@ def replace_num(x, origin, target):
     x[origin_ids] = np.nan  # facilitate calculating mean
     if target == 'mean':
         mean_x = np.nanmean(x, axis=0)
+        mean_x[np.isnan(mean_x)] = 0
         x[origin_ids] = np.take(mean_x, origin_ids[1])
     elif target == 'median':
         median_x = np.nanmedian(x, axis=0)
+        median_x[np.isnan(median_x)] = 0
         x[origin_ids] = np.take(median_x, origin_ids[1])
     else:
         raise Exception('check target value')
     return x
     
 
-#def standardize(x):
-#    """Standardize the original data set.
-#    Using feature scaling:
-#    X = (X - Xmin) / (Xmax - Xmin)
-#    """
-#    x  = (x - x.min(0)) / (x.max(0) - x.min(0))
-#    return x
-
 def build_poly(x, degree):
-    """polynomial basis functions for input data x, for j=0 up to j=degree."""
+    """
+    polynomial basis functions for input data x, for j=0 up to j=degree.
+
+    """
     
     #create the matrix tx
     poly_res = []
@@ -138,7 +135,7 @@ def load_header(data_path):
     return label
 
 
-def predict_labels(weights, data, method='log'):
+def predict_labels(cut, weights, data, method='log'):
     """
     Generates class predictions given weights, and a test data matrix
     
@@ -153,8 +150,8 @@ def predict_labels(weights, data, method='log'):
         y_pred = sigmoid(data @ weights)
     else:
         y_pred = np.dot(data, weights)
-    y_pred[np.where(y_pred <= 0.5)] = -1
-    y_pred[np.where(y_pred > 0.5)] = 1
+    y_pred[np.where(y_pred <= cut)] = -1
+    y_pred[np.where(y_pred > cut)] = 1
     
     return y_pred
 

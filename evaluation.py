@@ -3,7 +3,7 @@ from gradient import *
 from helpers import * 
 
 
-def one_round_cross_validation(y, tx, k, k_indices, seed, model_func, *args, **kwargs):
+def one_round_cross_validation(y, tx, k, k_indices, seed, cut, model_func, *args, **kwargs):
     """return the loss of ridge regression."""
     # get k'th subgroup in test, others in train
     y_test = y[k_indices[k]]
@@ -18,12 +18,12 @@ def one_round_cross_validation(y, tx, k, k_indices, seed, model_func, *args, **k
     loss_tr, w = model_func(y_train, tx_train, *args)
     loss_te = calculate_loss(y_test, tx_test, w)
     func_name = 'log' if model_func.__name__ == 'logistic_regression' else 'LS'
-    accuracy = validation_accuracy(y_test, tx_test, w, func_name)
+    accuracy = validation_accuracy(y_test, tx_test, w, cut, func_name)
     print('{} round, train loss {}, test loss {}, accuracy {}'.format(k, loss_tr, loss_te, accuracy))
     return w, loss_tr, loss_te, accuracy 
 
 
-def cross_validation(y, tx, k_fold, seed, model_func, *args, **kwargs):
+def cross_validation(y, tx, k_fold, seed, cut, model_func, *args, **kwargs):
     """
     Run cross validation on our dataset to see model performance
     
@@ -55,7 +55,7 @@ def cross_validation(y, tx, k_fold, seed, model_func, *args, **kwargs):
         # run CV k times, get accuracy each time
         # store w and loss for final evaluation
         w, loss_train, loss_test, accuracy = one_round_cross_validation(
-                y, tx, ki, k_indices, seed, model_func, *args, **kwargs)
+                y, tx, ki, k_indices, seed, cut, model_func, *args, **kwargs)
         ws.append(w)
         losses.append(loss_train)
         accuracies.append(accuracy)
@@ -63,8 +63,8 @@ def cross_validation(y, tx, k_fold, seed, model_func, *args, **kwargs):
     return ws, losses, accuracies
 
 
-def validation_accuracy(y_test, tx_test, w, func_name):
-    pred_y = predict_labels(w, tx_test, func_name)
+def validation_accuracy(y_test, tx_test, w, cut, func_name):
+    pred_y = predict_labels(cut, w, tx_test, func_name)
     correct_count = 0
     for predict_y, true_y in zip(pred_y, y_test):
         # pred_y belongs to {-1, 1}

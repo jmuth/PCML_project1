@@ -3,6 +3,10 @@ import numpy as np
 from helpers import *
 
 JET_INDEX = 22
+JET0_COLUMNS = [0, 1, 2, 3, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 29]
+JET1_COLUMNS = [0, 1, 2, 3, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 29]
+JET2_COLUMNS = JET2_COLUMNS = [i for i in range(30)]
+COLUMNS = [JET0_COLUMNS, JET1_COLUMNS, JET2_COLUMNS, JET3_COLUMNS]
 
 
 def split(y, tx, col_index, col_value):
@@ -20,14 +24,18 @@ def split(y, tx, col_index, col_value):
         value_rows = np.where(tx[:, col_index] == col_value)
         non_value_rows = np.delete(np.arange(tx.shape[0]), value_rows)
         value_tx, non_value_tx = tx[value_rows], tx[non_value_rows]
-        value_y, non_value_y = y[value_rows], y[non_value_rows]
+        if y:
+            value_y, non_value_y = y[value_rows], y[non_value_rows]
+        else:
+            value_y = non_value_y = []
         return {col_value: [value_y, value_tx, value_rows],
                 '-1': [non_value_y, non_value_tx, non_value_rows]} # -1 is used becasue there could be different non_col_value
     else:  # col_value is a list
         res = {}
-        for v in col_value:
+        for v, columns in zip(col_value, COLUMNS):
             rows_index = np.where(tx[:, col_index] == v)
-            res[v] = [y[rows_index], tx[rows_index], rows_index]
+            y_value = y[rows_index] if any(y) else []
+            res[v] = [y_value, tx[rows_index][:, columns], rows_index]
         return res
 
 
