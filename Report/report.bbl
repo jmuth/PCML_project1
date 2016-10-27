@@ -25,4 +25,11 @@
 C.~Adam-Bourdarios, G.~Cowan, C.~Germain, I.~Guyon, B.~Kégl, and D.~Rousseau,
   ``Learning to discover: the higgs boson machine learning challenge,'' 2014.
 
+\bibitem{LRcourse}
+M.~E. Khan, ``Logistic regression,'' 2015, machine Learning Course - CS-433.
+
+\bibitem{overflow}
+A.~Donda, ``Avoiding numerical overflow when calculating the value and gradient
+  of the logistic loss function,'' 2013, stackoverflow.com.
+
 \end{thebibliography}
