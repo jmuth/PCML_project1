@@ -3,6 +3,17 @@
 \usepackage{hyperref}
 \usepackage{graphicx}	% For figure environment
 
+% Packages added by Joachim
+
+%drow graph
+\usepackage{fancybox}
+\usepackage{tikz}
+\usepackage{capt-of}
+\usepackage{verbatim}
+
+% cancel math expression
+\usepackage{cancel}
+
 
 \begin{document}
 \title{PCML CS-433: Higgs Challenge Project}
@@ -28,6 +39,43 @@
 
 %========================
 \section{Models and Methods}
+
+
+\begin{figure}[tbp] %-------TIKZ PICTURE---------
+  \centering
+  \begin{tikzpicture}[level/.style={sibling distance=20mm/#1}]
+  \node [circle,draw] (z){dataset}
+  child {node [circle,draw] (a) {jet = 0}
+    	child {node [circle,draw] (b) {$\cancel{m_h}$}
+    	}
+  	child {node [circle,draw] (g) {$m_h$}
+  	}
+  }
+  child {node [circle,draw] (j) {jet = 1}
+      	child {node [circle,draw] (b) {$\cancel{m_h}$}
+    	}
+    	child {node [circle,draw] (g) {$m_h$}
+    	}
+  }
+    child {node [circle,draw] (j) {jet = 2}
+        child {node [circle,draw] (b) {$\cancel{m_h}$}
+    	}
+    	child {node [circle,draw] (g) {$m_h$}
+    	}
+  }
+    child {node [circle,draw] (j) {jet = 3}
+        child {node [circle,draw] (b) {$\cancel{m_h}$}
+    	}
+    	child {node [circle,draw] (g) {$m_h$}
+    	}
+  };
+  \end{tikzpicture}
+  \caption{Split of the dataset into 8 different cathegories}
+  \vspace{-3mm}
+  \label{fig:denoise-fourier}
+\end{figure}
+
+
 
 
 %========================
