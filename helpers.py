@@ -20,6 +20,7 @@ def standardize(x, minX = None, rangeX = None):
     x  = (x - minX) / rangeX
     return x, minX, rangeX
 
+
 def replace_num(x, origin, target):
     """
     replace missing values
@@ -48,13 +49,12 @@ def build_poly(x, degree):
     polynomial basis functions for input data x, for j=0 up to j=degree.
 
     """
-    
     #create the matrix tx
     poly_res = []
     for row_x in x:
         new_row = []
         for row_i in row_x:   # expand one row to three times its original size
-            new_row += [row_i ** d for d in range(degree + 1)]
+            new_row += [row_i ** d for d in range(1, degree + 1)]
         poly_res.append(new_row)
     return np.array(poly_res)
 
@@ -150,8 +150,8 @@ def predict_labels(cut, weights, data, method='log'):
         y_pred = sigmoid(data @ weights)
     else:
         y_pred = np.dot(data, weights)
-    y_pred[np.where(y_pred <= cut)] = -1
-    y_pred[np.where(y_pred > cut)] = 1
+    y_pred[np.where(y_pred < cut)] = -1
+    y_pred[np.where(y_pred >= cut)] = 1
     
     return y_pred
 

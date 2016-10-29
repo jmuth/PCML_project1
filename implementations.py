@@ -4,7 +4,7 @@ from costs import calculate_loss
 from gradient import *
 
 
-def least_squares_GD(y, tx, gamma, max_iters):
+def least_squares_GD(y, tx, initial_w, max_iters, gamma):
     """
     Linear regression using gradient descent
     
@@ -18,16 +18,16 @@ def least_squares_GD(y, tx, gamma, max_iters):
         loss (float): final loss after max_iterations
         w (ndarray): optimal weight vector
     """
-    w = np.zeros(tx.shape[1])
+    w = initial_w
     for n_iter in range(max_iters):
         grad = compute_gradient(y, tx, w)
         w = w - (gamma * grad)
 
-    loss = calculate_loss(y, tx, w)
-    return loss, w
+    loss = calculate_loss(y, tx, w, 'ls')
+    return w, loss
 
 
-def least_squares_SGD(y, tx, gamma, max_iters):
+def least_squares_SGD(y, tx, initial_w, max_iters, gamma):
     """
     Linear regression using stochastic gradient descent
     
@@ -41,15 +41,15 @@ def least_squares_SGD(y, tx, gamma, max_iters):
         loss (float): final loss after max_iterations
         w (ndarray): optimal weight vector
     """
-    w = np.zeros(tx.shape[1])
+    w = initial_w
     batch_size = 100
 
     for n_iter in range(max_iters): 
         grad = compute_stoch_gradient(y, tx, w, batch_size)
         w = w - (gamma * grad)
 
-    loss = calculate_loss(y, tx, w, method="rmse")
-    return loss, w
+    loss = calculate_loss(y, tx, w, 'ls')
+    return w, loss
 
 
 def least_squares(y, tx):
@@ -68,9 +68,9 @@ def least_squares(y, tx):
         (X.T @ X) @ w = X.T @ y
     """
     w = np.linalg.solve(tx.T @ tx, tx.T @ y)
-    loss = calculate_loss(y, tx, w)
+    loss = calculate_loss(y, tx, w, 'ls')
     
-    return loss, w
+    return w, loss
 
 
 def ridge_regression(y, tx, lambda_):
@@ -96,14 +96,14 @@ def ridge_regression(y, tx, lambda_):
     first_part = tx.T @ tx
     second_part = lambda_prime * np.identity(tx.shape[1])   # 2N*lamb*Im
     third_part = tx.T @ y
-    optimal_w = np.linalg.solve(first_part+second_part, third_part)
+    w = np.linalg.solve(first_part+second_part, third_part)
     
-    loss = calculate_loss(y, tx, w)
+    loss = calculate_loss(y, tx, w, 'ls')
 
-    return loss, w
+    return w, loss
 
 
-def logistic_regression(y, tx, gamma, max_iters):
+def logistic_regression(y, tx, initial_w, max_iters, gamma):
     """
     Logistic regression using gradient descent 
     we don't use Newton's method because computing hessian
@@ -122,7 +122,7 @@ def logistic_regression(y, tx, gamma, max_iters):
     # init parameters
     threshold = 1e-8
     previous_loss = 0
-    w = np.zeros(tx.shape[1])
+    w = initial_w
     
     previous_loss = 0
     for n_iter in range(max_iters):
@@ -139,10 +139,10 @@ def logistic_regression(y, tx, gamma, max_iters):
             break
         previous_loss = loss
 
-    return loss, w
+    return w, loss
 
 
-def reg_logistic_regression(y, tx, lambda_, gamma, max_iters):
+def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
     """
     Regularized logistic regression using gradient descent or SGD
     Use L2 regularizer
@@ -160,10 +160,10 @@ def reg_logistic_regression(y, tx, lambda_, gamma, max_iters):
     # init parameters
     threshold = 1e-8
     previous_loss = 0
-    w = np.zeros(tx.shape[1])
+    w = initial_w
     
     previous_loss = 0
-    for n_iter in range(max_iter):
+    for n_iter in range(max_iters):
         # get loss and update w.
         penalty = lambda_ * (w.T @ w)
         loss = calculate_loss(y, tx, w) + penalty
@@ -178,4 +178,4 @@ def reg_logistic_regression(y, tx, lambda_, gamma, max_iters):
             break
         previous_loss = loss
 
-    return loss, w
+    return w, loss

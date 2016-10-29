@@ -6,7 +6,7 @@ import numpy as np
 
 def calculate_mse(e):
     """Calculate the mse for vector e."""
-    return 1/2*np.mean(e**2)
+    return e.T @ e / (2 * len(e))
 
 
 def calculate_mae(e):
@@ -31,6 +31,6 @@ def calculate_loss(y, tx, w, method="log"):
     """
     if(method=="log"):
         return calculate_log(y, tx, w)
-    elif(method=="rmse"):
+    else:
         e = y - tx.dot(w)
         return calculate_rmse(e)

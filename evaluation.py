@@ -15,10 +15,12 @@ def one_round_cross_validation(y, tx, k, k_indices, seed, cut, model_func, *args
     tx_train = tx[not_k]
 
     # run model functions 
-    loss_tr, w = model_func(y_train, tx_train, *args)
-    loss_te = calculate_loss(y_test, tx_test, w)
-    func_name = 'log' if model_func.__name__ == 'logistic_regression' else 'LS'
-    accuracy = validation_accuracy(y_test, tx_test, w, cut, func_name)
+    if 'initial_w' in kwargs:
+        kwargs = dict(kwargs, initial_w=np.zeros(tx_train.shape[1]))
+    w, loss_tr = model_func(y_train, tx_train, *args, **kwargs)
+    method = 'log' if 'logistic_regression' in model_func.__name__ else 'ls'
+    loss_te = calculate_loss(y_test, tx_test, w, method)
+    accuracy = validation_accuracy(y_test, tx_test, w, cut, method)
     print('{} round, train loss {}, test loss {}, accuracy {}'.format(k, loss_tr, loss_te, accuracy))
     return w, loss_tr, loss_te, accuracy 
 
@@ -34,7 +36,6 @@ def cross_validation(y, tx, k_fold, seed, cut, model_func, *args, **kwargs):
         seed (int): random seed
         model_func (func): model function
         *args (tuple): model function parameter tuple
-        **kwargs (dict): model function parameter dict
         CAVEAT: **method** can be used to indicate the type of loss function, e.g. log/rmse 
 
     Return:
@@ -49,22 +50,24 @@ def cross_validation(y, tx, k_fold, seed, cut, model_func, *args, **kwargs):
     k_indices = [indices[k * interval: (k + 1) * interval]
                  for k in range(k_fold)]
     ws = []
-    losses = []
+    tr_losses = []
+    te_losses = []
     accuracies = []
-    for ki in range(k_fold):
+    # for ki in range(k_fold):
         # run CV k times, get accuracy each time
         # store w and loss for final evaluation
-        w, loss_train, loss_test, accuracy = one_round_cross_validation(
-                y, tx, ki, k_indices, seed, cut, model_func, *args, **kwargs)
-        ws.append(w)
-        losses.append(loss_train)
-        accuracies.append(accuracy)
+    w, loss_train, loss_test, accuracy = one_round_cross_validation(
+                    y, tx, 0, k_indices, seed, cut, model_func, *args, **kwargs)
+    ws.append(w)
+    tr_losses.append(loss_train)
+    te_losses.append(loss_test)
+    accuracies.append(accuracy)
     
-    return ws, losses, accuracies
+    return np.mean(ws), np.mean(tr_losses), np.mean(te_losses), np.mean(accuracies)
 
 
-def validation_accuracy(y_test, tx_test, w, cut, func_name):
-    pred_y = predict_labels(cut, w, tx_test, func_name)
+def validation_accuracy(y_test, tx_test, w, cut, method):
+    pred_y = predict_labels(cut, w, tx_test, method)
     correct_count = 0
     for predict_y, true_y in zip(pred_y, y_test):
         # pred_y belongs to {-1, 1}
