@@ -1,6 +1,6 @@
 from costs import *
 from gradient import *
-from helpers import * 
+from helpers import *
 
 
 def one_round_cross_validation(y, tx, k, k_indices, seed, cut, model_func, *args, **kwargs):
@@ -8,13 +8,13 @@ def one_round_cross_validation(y, tx, k, k_indices, seed, cut, model_func, *args
     # get k'th subgroup in test, others in train
     y_test = y[k_indices[k]]
     tx_test = tx[k_indices[k]]
-   
-    # find other indices 
+
+    # find other indices
     not_k = [i for i in range(len(y)) if i not in k_indices[k]]
     y_train = y[not_k]
     tx_train = tx[not_k]
 
-    # run model functions 
+    # run model functions
     if 'initial_w' in kwargs:
         kwargs = dict(kwargs, initial_w=np.zeros(tx_train.shape[1]))
     w, loss_tr = model_func(y_train, tx_train, *args, **kwargs)
@@ -67,6 +67,16 @@ def cross_validation(y, tx, k_fold, seed, cut, model_func, *args, **kwargs):
 
 
 def validation_accuracy(y_test, tx_test, w, cut, method):
+    """
+    calculate the accuracy of the obtained parameter w
+
+    Params:
+        y_test (1-D ndarray): true y value
+        tx_test (2-D ndarray): feature matrix
+        w (1-D ndarray): optimal w obtained by training
+        cut (float): patition value when predicting
+        method (str): loss function name, i.e. log or ls
+    """
     pred_y = predict_labels(cut, w, tx_test, method)
     correct_count = 0
     for predict_y, true_y in zip(pred_y, y_test):
