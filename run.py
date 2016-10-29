@@ -15,7 +15,7 @@ def run():
 
 	## Load data: train set
 	print("Load data: train set")
-	y, x, ids = helpers.load_csv_data('data/train.csv', backgroud_value = 0)
+	y, x, ids = helpers.load_csv_data('data/train.csv', background_value = 0)
 
 	## train model
 	print("Train model")

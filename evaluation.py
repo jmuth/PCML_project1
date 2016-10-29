@@ -21,7 +21,7 @@ def one_round_cross_validation(y, tx, k, k_indices, seed, cut, model_func, *args
     method = 'log' if 'logistic_regression' in model_func.__name__ else 'ls'
     loss_te = calculate_loss(y_test, tx_test, w, method)
     accuracy = validation_accuracy(y_test, tx_test, w, cut, method)
-    print('{} round, train loss {}, test loss {}, accuracy {}'.format(k, loss_tr, loss_te, accuracy))
+    #print('{} round, train loss {}, test loss {}, accuracy {}'.format(k, loss_tr, loss_te, accuracy))
     return w, loss_tr, loss_te, accuracy 
 
 
@@ -53,15 +53,16 @@ def cross_validation(y, tx, k_fold, seed, cut, model_func, *args, **kwargs):
     tr_losses = []
     te_losses = []
     accuracies = []
-    # for ki in range(k_fold):
+    for ki in range(k_fold):
         # run CV k times, get accuracy each time
         # store w and loss for final evaluation
-    w, loss_train, loss_test, accuracy = one_round_cross_validation(
-                    y, tx, 0, k_indices, seed, cut, model_func, *args, **kwargs)
-    ws.append(w)
-    tr_losses.append(loss_train)
-    te_losses.append(loss_test)
-    accuracies.append(accuracy)
+
+        w, loss_train, loss_test, accuracy = one_round_cross_validation(
+                        y, tx, ki, k_indices, seed, cut, model_func, *args, **kwargs)
+        ws.append(w)
+        tr_losses.append(loss_train)
+        te_losses.append(loss_test)
+        accuracies.append(accuracy)
     
     return np.mean(ws), np.mean(tr_losses), np.mean(te_losses), np.mean(accuracies)
 

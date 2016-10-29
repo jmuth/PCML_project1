@@ -9,7 +9,7 @@ from split import *
 from plots import *
 
 
-def train(y, x, poly, split_method, replace, cv, cut, model_func, *args, **kwargs):
+def train(y, x, poly, split_method, replace, cv, cut, model_func, lambdas=None, *args, **kwargs):
     """
     serves as public api function
 
@@ -30,17 +30,27 @@ def train(y, x, poly, split_method, replace, cv, cut, model_func, *args, **kwarg
         w. when cv is True, the aforementioned return value contains not only w, but 
         train loss, test loss and accuracy of each round of cross validation.
     """
+
+
     if split_method:
         split_train = split(y, x, split_method)
         ws = []
-        for group in split_train:
+        for i, group in enumerate(split_train):
             sub_y, sub_x, id_indices = group
-            w = _inner_train(sub_y, sub_x, poly, replace, cv, cut, model_func, *args, **kwargs)
+            if isinstance(poly, int):
+                # same poly for all regression
+                w = _inner_train(sub_y, sub_x, poly, replace, cv, cut, model_func, *args, **kwargs)
+            else:
+                # different poly for each regression
+                lam = lambdas[i]
+                w = _inner_train(sub_y, sub_x, poly[i], replace, cv, cut, model_func, \
+                    lambda_ = lam, **kwargs)
             ws.append(w)
         return ws
     else:
         w = _inner_train(y, x, poly, replace, cv, cut, model_func, *args, **kwargs)
         return w
+
 
     
 def _inner_train(y, x, poly, replace, cv, cut, model_func, *args, **kwargs):
@@ -56,7 +66,7 @@ def _inner_train(y, x, poly, replace, cv, cut, model_func, *args, **kwargs):
         x = build_poly(x, poly)
     tx = standardize(x)[0]
     if cv:
-        w, tr_loss, te_loss, accu = cross_validation(y, tx, 5, 0, cut, model_func, *args, **kwargs)
+        w, tr_loss, te_loss, accu = cross_validation(y, tx, 4, 0, cut, model_func, *args, **kwargs)
         return w, tr_loss, te_loss, accu
     else:
         if 'initial_w' in kwargs:
@@ -90,7 +100,14 @@ def predict(test_y, test_x, test_ids, cut, w, poly, split_method, replace, loss_
         res = {}
         for index, group in enumerate(split_test):
             _, sub_x, id_indices = group
-            pred_y = _inner_predict(cut, w[index], sub_x, poly, replace, loss_method)
+
+            if isinstance(poly, int):
+                # same poly for all regression
+                pred_y = _inner_predict(cut, w[index], sub_x, poly, replace, loss_method)
+            else:
+                # different poly for each regression
+                pred_y = _inner_predict(cut, w[index], sub_x, poly[index], replace, loss_method)
+            
             res.update(dict(zip(test_ids[id_indices], pred_y)))
         # sort res
         res = OrderedDict(sorted(res.items()))
