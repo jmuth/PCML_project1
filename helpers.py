@@ -90,7 +90,7 @@ def batch_iter(y, tx, batch_size, num_batches=None, shuffle=True):
             yield shuffled_y[start_index:end_index], shuffled_tx[start_index:end_index]
 
 
-def load_csv_data(data_path, sub_sample=False):
+def load_csv_data(data_path, sub_sample=False, backgroud_value = 0):
     """
     Load data from csv files
     
@@ -110,7 +110,7 @@ def load_csv_data(data_path, sub_sample=False):
 
     # convert class labels from strings to binary (0,1)
     yb = np.ones(len(y))
-    yb[np.where(y=='b')] = 0
+    yb[np.where(y=='b')] = backgroud_value
     
     # sub-sample
     if sub_sample:
