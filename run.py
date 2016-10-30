@@ -6,33 +6,42 @@ import implementations
 
 def run():
 
-	n_iters = 50000
-	gamma = 0.000001
-	lambda_ = 0.01
-	initial_w = np.zeros(90)
-	cut = 0.43
-	poly = 2
+	# load full dataset
+	y_full, x_full, _ = helpers.load_csv_data('data/train.csv', sub_sample = False, background_value = -1)
 
-	## Load data: train set
-	print("Load data: train set")
-	y, x, ids = helpers.load_csv_data('data/train.csv', background_value = 0)
+	# train the model with chosen parameters
 
-	## train model
-	print("Train model")
-	w = api.train(y, x, poly=poly, split_method='mass', replace=None, cv=False, cut=cut, 
-	               model_func=implementations.reg_logistic_regression, 
-	               lambda_=lambda_, initial_w=initial_w, max_iters=n_iters, gamma=gamma)
+	#LAMBDAS = lambdas_star
+	#DEGREES = degrees_star
 
-	## Load data: test set
-	print("Load data: test set")
+	LAMBDAS = [1.59985871961e-05, 3.23745754282e-05, 0.152641796718, 3.23745754282e-05, 0.0184206996933, 7.90604321091e-06, 0.625055192527, 0.00910298177992] 
+	DEGREES = [2, 2, 13, 2, 2, 3, 3, 3]
+
+	print("Kaggle summary")
+	print("method: mass, replace: None, method: RR")
+	print("lambdas: ", LAMBDAS)
+	print("degrees: ", DEGREES)
+
+	# check accuracy
+	w_cv = api.train(y_full, x_full, poly=DEGREES, split_method='mass', replace=None, cv=True, cut=0., \
+		model_func=implementations.ridge_regression, lambdas = LAMBDAS)
+
+	print("accuracy mean :" ,np.mean(np.array(w_cv)[:,3]))
+	print("details: ", np.array(w_cv)[:,3])
+
+	# train de model
+	w = api.train(y_full, x_full, poly=DEGREES, split_method='mass', replace=None, cv=False, cut=0., \
+		model_func=implementations.ridge_regression, lambdas = LAMBDAS)
+
+	# load test set
 	test_y, test_x, test_ids = helpers.load_csv_data('data/test.csv')
 
-	## Predict
-	print("Predict y's")
-	api.predict(test_y, test_x, test_ids, 0.43, w, poly=poly, split_method='mass', \
-	 replace=None, res_to_file=True)
+	# do the final prediction
 
+	final_pred = api.predict(test_y, test_x, test_ids, 0., w, poly=DEGREES, split_method='mass', \
+		replace=None, loss_method='ls', res_to_file=True)
 
+	print("Prediction produced in file predict_split.csv")
 
 
 
