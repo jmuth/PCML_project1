@@ -24,6 +24,15 @@ def _inner_search(y, x, degrees, lambdas, optimize_on="te_loss"):
 
 	return best
 
+def load_and_search(sample = True, optimize_on = "te_loss"):
+
+	# load the data
+	print("load train set")
+	y, x, _ = helpers.load_csv_data('data/train.csv', sub_sample = sample, background_value = -1)
+
+	#search
+	return search(y, x, optimize_on)
+
 
 def search(y, x, optimize_on="te_loss"):
 	"""
@@ -39,6 +48,7 @@ def search(y, x, optimize_on="te_loss"):
 		degrees_star: array of best degree for 8 models
 	"""
 
+        
 	# split the data (8 model)
 	split_train = split.split(y, x, method='mass')
 
@@ -49,6 +59,7 @@ def search(y, x, optimize_on="te_loss"):
 
 	lambdas_star = []
 	degrees_star = []
+	print("start search")
 	for i, splitted_set in enumerate(split_train):
 		sub_y, sub_x, id_indices = splitted_set
 
@@ -57,7 +68,7 @@ def search(y, x, optimize_on="te_loss"):
 
 		# zoomed search around best parameters
 		# zoomed_degree = range(degree_star-2, degree_star + 2)
-		zoomed_lambda = np.logspace(lambda_star - 2, lambda_star + 2)
+		zoomed_lambda = np.logspace(lambda_star - 2, lambda_star + 2, 25)
 		lambda_star, degree_star, score = _inner_search(sub_y, sub_x, degrees, zoomed_lambda, optimize_on)
 
 		# store found values
@@ -75,6 +86,8 @@ def search(y, x, optimize_on="te_loss"):
 		elif optimize_on == "accu":
 			print("accuracy: ", score)
 
+	print("...............................")
+	print("end")
 	return lambdas_star, degrees_star	
 
 
