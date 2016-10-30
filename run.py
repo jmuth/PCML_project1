@@ -34,7 +34,7 @@ def run():
 	print("--------------------------------------------")
 
 	# train de model
-	print("training model")
+	print("training model...")
 	w = api.train(y_full, x_full, poly=DEGREES, split_method='mass', replace=None, cv=False, cut=0., \
 		model_func=implementations.ridge_regression, lambdas = LAMBDAS)
 
@@ -43,7 +43,7 @@ def run():
 	test_y, test_x, test_ids = helpers.load_csv_data('data/test.csv')
 
 	# do the final prediction
-	print("producing prediction file...")
+	print("predicting...")
 	final_pred = api.predict(test_y, test_x, test_ids, 0., w, poly=DEGREES, split_method='mass', \
 		replace=None, loss_method='ls', res_to_file=True)
 
