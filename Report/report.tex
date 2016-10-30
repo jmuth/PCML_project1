@@ -17,6 +17,9 @@
 % math
 \usepackage{amsmath}
 
+% url
+\usepackage{hyperref}
+
 
 \begin{document}
 \title{PCML CS-433: Higgs Challenge Project}
@@ -170,11 +173,32 @@ We apply a 2-steps grid-search method on each of the eight data subset for two p
 
 %========================
 \section{Results}
-This model gives us an accuracy of $83.75 \%$ when tested by 4-fold cross-validation. However, the accuracy against test set provided on Kakkgle.com only scored $77.748\%$
+This model gives us an accuracy of $83.08 \%$ when tested by 4-fold cross-validation. However, the accuracy against test set provided on {\color{blue}\href{https://www.kaggle.com}{Kaggle.com}} only scored $77.748\%$. The details of the accuracy of the model over each data subsets are listed on table \ref{tab:details}.
+
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}[c]{| l| | c | c |}
+    \hline
+    Subset 	& Percentage of Higgs &Accuracy of the model \\
+    \hline \hline
+    jet0 no mass 			& 0.0596		& 0.9437		\\
+    jet0 mass 				& 0.3243		& 0.7866		\\
+    jet1 no mass				& 0.0932		& 0.9067 		\\
+    jet1 mass				& 0.3858	 	& 0.7236 		\\
+    jet2 no mass				& 0.1581		& 0.8699		\\
+    jet2 mass				& 0.5327		& 0.7767		\\
+    jet3 no mass				& 0.0704		& 0.9295		\\
+    jet3 mass				& 0.3203		& 0.7102		\\
+    \hline
+  \end{tabular}
+  \caption{Details of model accuracy}
+  \label{tab:details}
+\end{table}
 
 
 %========================
 \section{Discussion}
+The fact that the prediction is better on the local test than in {\color{blue}\href{https://www.kaggle.com}{Kaggle.com}} could point some overfitting on our training method.
 
 
 %========================
