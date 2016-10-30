@@ -44,6 +44,10 @@ The \emph{Higgs boson machine learning challenge} consists of a large dataset of
 %========================
 \section{Models and Methods}
 
+\subsection{Standardization}
+{\color{red}DO WE REALLY NEED IT ????}\\
+In order to work on comparable data, and not to overweight some of them, a standardization must be applied on them.
+
 \subsection{Split of the data}
 In order to chose which features to keep in the machine learning modelling we did, and to deal with the great number of \emph{NaN} in the data set, we analyzed their distrubution. 
 
@@ -53,83 +57,120 @@ Once this split proceeded, subsets share all the same defined features, except t
 
 \begin{figure}[tbp] %-------TIKZ PICTURE---------
   \centering
-  \begin{tikzpicture}[level/.style={sibling distance=20mm/#1}]
-  \node [circle,draw] (z){dataset}
-  child {node [circle,draw] (a) {jet = 0}
-    	child {node [circle,draw] (b) {$\cancel{m_h}$}	
-    	}
-  	child {node [circle,draw] (g) {$m_h$}
-  	}
+\begin{tikzpicture}[level/.style={sibling distance=20mm/#1}]
+\node [circle,draw] (z){dataset}
+  child {node [circle,draw] (j) {jet = 0}
+  child {node [circle,draw] (l) {$\cancel{m_H}$}
+    child {node [circle,draw] (c){$d, \lambda$}
+      child {node [circle,draw] (p) {ML}
+      }
+    }
   }
+  child {node [circle,draw] (l) {$m_H$}
+    child {node [circle,draw] (c){$d, \lambda$}
+      child {node [circle,draw] (p) {ML}
+      }
+    }
+  }
+}
   child {node [circle,draw] (j) {jet = 1}
-      	child {node [circle,draw] (b) {$\cancel{m_h}$}
-    	}
-    	child {node [circle,draw] (g) {$m_h$}
-    	}
+  child {node [circle,draw] (l) {$\cancel{m_H}$}
+    child {node [circle,draw] (c){$d, \lambda$}
+      child {node [circle,draw] (p) {ML}
+      }
+    }
   }
-    child {node [circle,draw] (j) {jet = 2}
-        child {node [circle,draw] (b) {$\cancel{m_h}$}
-    	}
-    	child {node [circle,draw] (g) {$m_h$}
-    	}
+  child {node [circle,draw] (l) {$m_H$}
+    child {node [circle,draw] (c){$d, \lambda$}
+      child {node [circle,draw] (p) {ML}
+      }
+    }
   }
-    child {node [circle,draw] (j) {jet = 3}
-        child {node [circle,draw] (b) {$\cancel{m_h}$}
-    	}
-    	child {node [circle,draw] (g) {$m_h$}
-    	}
-  };
-  \end{tikzpicture}
-  \caption{Split of the dataset into eight different cathegories}
+}
+  child {node [circle,draw] (j) {jet = 2}
+  child {node [circle,draw] (l) {$\cancel{m_H}$}
+    child {node [circle,draw] (c){$d, \lambda$}
+      child {node [circle,draw] (p) {ML}
+      }
+    }
+  }
+  child {node [circle,draw] (l) {$m_H$}
+    child {node [circle,draw] (c){$d, \lambda$}
+      child {node [circle,draw] (p) {ML}
+      }
+    }
+  }
+}
+  child {node [circle,draw] (j) {jet = 3}
+  child {node [circle,draw] (l) {$\cancel{m_H}$}
+    child {node [circle,draw] (c){$d, \lambda$}
+      child {node [circle,draw] (p) {ML}
+      }
+    }
+  }
+  child {node [circle,draw] (l) {$m_H$}
+    child {node [circle,draw] (c){$d, \lambda$}
+      child {node [circle,draw] (p) {ML}
+      }
+    }
+  }
+};
+\end{tikzpicture}
+  \caption{Overall view of modelling pipeline. Split of the dataset into eight different cathegories, search of 
+  the parameters and calculation of weight by Ridge Regression.}
   \vspace{-3mm}
   \label{split}
 \end{figure}
 
+
+
+
 \subsection{Features selection}
+{\color{red} WE MUST TEST IT AND CHOSE IF WE KEEP} \\
 As our eight datasets are well splitted, we can just discard the features only containing \emph{NaN} values. The remaining features are well completed. This does not mean that they are all interesting. The histogram of their frequencies show candidates of possibly useless features which have almost no variance (see figure \ref{hist})
 
 \begin{figure}[tbp] %-------TIKZ PICTURE---------
   \centering
-  \includegraphics[width=\columnwidth]{img/features.png}
-  \caption{Frequencies histograms of feature values of subset jet0 $m_h$}
+  \includegraphics[width=\columnwidth]{img/cross_validation_lot.pdf}
+  \caption{Grid search for parameter selection $d$ and $\lambda$ on the eight data subsets. }
   \vspace{-3mm}
-  \label{hist}
+  \label{param}
 \end{figure}
 
 
-\subsection{Polynoms build}
+\subsection{Polynomial building}
 We construct a polynom matrix of degree $d$ with our features matrix. The degree is chosen by 4-fold cross validation and is different for each of our eight datasets.
 
-\subsection{Logistic Regression}
-As we face a \emph{classification} problem, we choose to use a \emph{Logistic Regression} algorithm which shows good result as binary classifier. \cite{LRcourse} This choice leads to two problems to problems to take care:
-\subsubsection{Rescale of the y's} 
-As LR must be used for result values 0 or 1, we rescale $y in {-1, 1}$ to $y \in {0, 1}$. 
 
-\subsubsection{Deal with overflow}
-\emph{Double} value can handle number until $\sim 10^{304}$. This limit is reached with $exp(x)$ for $x \simeq 700$. To handle this problem, we use Taylor series of first order in both exponential and sigma functions. \cite{overflow}
+\subsection{Selection of Ridge Regression parameters}
+We apply a 2-steps grid-search method on each of the eight data subset for two parameters: \textbf{polynomial degree} $d \in [0, 15]$ and \textbf{regularization parameter} $\lambda \in [1^{-10}, 1]$.  Each pair of parameter is test through a 4-fold cross-validation and scored by RMS error. Figure \ref{param} shows the result. Once the best parameters are chosen for each subsets, we zoomed on them and apply again a grid-search on the zoomed interval, to gain precision. Table \ref{tab:param} sums up the chosen parameters.
 
-For $s >> 1 \rightarrow 1+exp(s) \simeq exp(s)$ then 
-$$
-log(1+exp(s)) \simeq log(exp(s))=s.
-$$
-$$
-exp(s)./(1+exp(s))\simeq 1
-$$
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}[c]{| l| | c | c |}
+    \hline
+    Subset 	& lambda $\lambda$ & degree $d$ \\
+    \hline \hline
+    jet0 no mass 			& 1.5998e-05	& 2		\\
+    jet0 mass 				& 3.2374e-05	& 2		\\
+    jet1 no mass				& 0.1526		& 13 		\\
+    jet1 mass				& 3.2374e-05 	& 2 		\\
+    jet2 no mass				& 0.0184		& 2		\\
+    jet2 mass				& 7.9060e-06	& 3		\\
+    jet3 no mass				& 0.6250		& 3		\\
+    jet3 mass				& 0.0091		& 3		\\
+    \hline
+  \end{tabular}
+  \caption{Selected parameters of Ridge Regression}
+  \label{tab:param}
+\end{table}
 
-For $0 < s << 1 \rightarrow exp(s)\simeq 1+s$ and then
-$$
-log(1+exp(s))\simeq log(2+s) \simeq log(2)+s/2
-$$
-$$
-exp(s)./(1+exp(s)) \simeq 1/2+s/4.
-$$
 
-\subsection{Selection of best parameter}
-We apply a grid-search method on each of the eight data subset for two parameters: \textbf{polynomial degree} $d \in [0, 15]$ and \textbf{regularization parameter} $\lambda \in [1^{-10}, 1]$.  For each pair of parameter is test through a 4-fold cross-validation and scored by RMS error.
+
 
 %========================
 \section{Results}
-
+This model gives us an accuracy of $83.75 \%$ when tested by 4-fold cross-validation. However, the accuracy against test set provided on Kakkgle.com only scored $77.748\%$
 
 
 %========================
