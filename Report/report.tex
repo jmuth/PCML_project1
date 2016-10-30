@@ -56,7 +56,7 @@ Once this split proceeded, subsets share all the same defined features, except t
   \begin{tikzpicture}[level/.style={sibling distance=20mm/#1}]
   \node [circle,draw] (z){dataset}
   child {node [circle,draw] (a) {jet = 0}
-    	child {node [circle,draw] (b) {$\cancel{m_h}$}
+    	child {node [circle,draw] (b) {$\cancel{m_h}$}	
     	}
   	child {node [circle,draw] (g) {$m_h$}
   	}
@@ -124,6 +124,8 @@ $$
 exp(s)./(1+exp(s)) \simeq 1/2+s/4.
 $$
 
+\subsection{Selection of best parameter}
+We apply a grid-search method on each of the eight data subset for two parameters: \textbf{polynomial degree} $d \in [0, 15]$ and \textbf{regularization parameter} $\lambda \in [1^{-10}, 1]$.  For each pair of parameter is test through a 4-fold cross-validation and scored by RMS error.
 
 %========================
 \section{Results}
