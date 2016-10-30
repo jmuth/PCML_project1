@@ -10,6 +10,11 @@ JET2_COLUMNS = JET3_COLUMNS = [i for i in range(29) if i != JET_INDEX]
 
 COLUMNS = [JET0_COLUMNS, JET1_COLUMNS, JET2_COLUMNS, JET3_COLUMNS]
 
+# CV result: Lambda
+# in order: jet0 nan_mass, jet0 mass, jet1 nan_mass, jet1 mass, ...
+LAMBDAS = [0.01, 0.0001, 0.02, 0.00001, 0.02, 0.0001, 1, 0.01]
+DEGREES = [3, 2, 2, 2, 2, 2, 3, 3]
+
 
 def split(y, tx, method):
     """
