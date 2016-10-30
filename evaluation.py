@@ -1,27 +1,32 @@
 from costs import *
-from proj1_helpers import *
+from gradient import *
+from helpers import *
 
 
-def one_round_cross_validation(y, tx, k, k_indices, seed, model_func, *args, **kwargs):
+
+def one_round_cross_validation(y, tx, k, k_indices, seed, cut, model_func, *args, **kwargs):
     """return the loss of ridge regression."""
     # get k'th subgroup in test, others in train
     y_test = y[k_indices[k]]
     tx_test = tx[k_indices[k]]
-   
-    # find other indices 
-    not_k = np.array([i for i in range(len(y)) if i not in k_indices[k]])
+
+    # find other indices
+    not_k = [i for i in range(len(y)) if i not in k_indices[k]]
     y_train = y[not_k]
     tx_train = tx[not_k]
 
-    # run model functions 
-    loss_tr, w = model_func(y_train, tx_train, *args)
-    loss_te = calculate_loss(y_test, tx_test, w, *args)
-    func_name = 'LS' if model_func.__name__ == 'least_squares' else 'LR'
-    accuracy = validation_accuracy(y_test, tx_test, w, func_name)
+    # run model functions
+    if 'initial_w' in kwargs:
+        kwargs = dict(kwargs, initial_w=np.zeros(tx_train.shape[1]))
+    w, loss_tr = model_func(y_train, tx_train, *args, **kwargs)
+    method = 'log' if 'logistic_regression' in model_func.__name__ else 'ls'
+    loss_te = calculate_loss(y_test, tx_test, w, method)
+    accuracy = validation_accuracy(y_test, tx_test, w, cut, method)
+    #print('{} round, train loss {}, test loss {}, accuracy {}'.format(k, loss_tr, loss_te, accuracy))
     return w, loss_tr, loss_te, accuracy 
 
 
-def cross_validation(y, tx, k_fold, seed, model_func, *args, **kwargs):
+def cross_validation(y, tx, k_fold, seed, cut, model_func, *args, **kwargs):
     """
     Run cross validation on our dataset to see model performance
     
@@ -32,7 +37,6 @@ def cross_validation(y, tx, k_fold, seed, model_func, *args, **kwargs):
         seed (int): random seed
         model_func (func): model function
         *args (tuple): model function parameter tuple
-        **kwargs (dict): model function parameter dict
         CAVEAT: **method** can be used to indicate the type of loss function, e.g. log/rmse 
 
     Return:
@@ -47,31 +51,43 @@ def cross_validation(y, tx, k_fold, seed, model_func, *args, **kwargs):
     k_indices = [indices[k * interval: (k + 1) * interval]
                  for k in range(k_fold)]
     ws = []
-    losses = []
+    tr_losses = []
+    te_losses = []
     accuracies = []
     for ki in range(k_fold):
         # run CV k times, get accuracy each time
         # store w and loss for final evaluation
+
         w, loss_train, loss_test, accuracy = one_round_cross_validation(
-                y, tx, ki, k_indices, seed, model_func, *args, **kwargs)
+                        y, tx, ki, k_indices, seed, cut, model_func, *args, **kwargs)
         ws.append(w)
-        losses.append(loss_train)
+        tr_losses.append(loss_train)
+        te_losses.append(loss_test)
         accuracies.append(accuracy)
     
-    return np.mean(losses), np.mean(accuracies)
+    return np.mean(ws), np.mean(tr_losses), np.mean(te_losses), np.mean(accuracies)
 
 
-def validation_accuracy(y_test, tx_test, w, func_name):
-    if func_name == 'LR':
-        pred_y = predict_labels(w, tx_test)
-    elif func_name == 'LS':
-        pred_y = tx_test @ w
-        pred_y[pred_y > 0] = 1
-        pred_y[pred_y <= 0] = -1
+
+def validation_accuracy(y_test, tx_test, w, cut, method):
+    """
+    calculate the accuracy of the obtained parameter w
+
+    Params:
+        y_test (1-D ndarray): true y value
+        tx_test (2-D ndarray): feature matrix
+        w (1-D ndarray): optimal w obtained by training
+        cut (float): patition value when predicting
+        method (str): loss function name, i.e. log or ls
+    """
+    pred_y = predict_labels(cut, w, tx_test, method)
     correct_count = 0
     for predict_y, true_y in zip(pred_y, y_test):
-         correct_count += predict_y == true_y
-    
+        # pred_y belongs to {-1, 1}
+        # y_test belongs to {0, 1}
+        if predict_y == -1 and true_y == 0 or \
+            predict_y == true_y:
+            correct_count += 1
     return correct_count / len(y_test)
 
 def test_accuracy(y_test, y_predict):

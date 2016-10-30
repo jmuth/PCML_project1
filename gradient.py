@@ -2,7 +2,6 @@
 """A function to compute the cost."""
 
 import numpy as np
-import math
 from helpers import *
 
 
@@ -94,7 +93,8 @@ def sigmoid(t):
             return 1    # inf / (1 + inf)
     else:  # i is a vector
         # after the division, inf turns to nan
-        res[np.isnan(res)] = 1
+        if any(np.isnan(res)):
+             res[np.isnan(res)] = 1
     return res
 
 
