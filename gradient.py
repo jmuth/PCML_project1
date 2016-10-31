@@ -2,7 +2,7 @@
 """A function to compute the cost."""
 
 import numpy as np
-from helpers import *
+import helpers
 
 
 def compute_gradient(y, tx, w):
@@ -42,7 +42,7 @@ def compute_stoch_gradient(y, tx, w, batch_size):
         under MSE
     """
     stoch_grad = 0
-    for minibatch_y, minibatch_tx in batch_iter(y, tx, batch_size):
+    for minibatch_y, minibatch_tx in helpers.batch_iter(y, tx, batch_size):
         stoch_grad += compute_gradient(minibatch_y, minibatch_tx, w)
         
     stoch_grad = stoch_grad / batch_size

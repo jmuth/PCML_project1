@@ -4,7 +4,7 @@ from costs import calculate_loss
 from gradient import *
 
 
-def least_squares_GD(y, tx, initial_w, max_iters, gamma):
+def least_squares_GD(y, tx, initial_w = None, max_iters = 1000, gamma = 0.01):
     """
     Linear regression using gradient descent
     
@@ -18,7 +18,11 @@ def least_squares_GD(y, tx, initial_w, max_iters, gamma):
         loss (float): final loss after max_iterations
         w (ndarray): optimal weight vector
     """
-    w = initial_w
+    if (initial_w is None):
+        w = np.ones(tx.shape[1])
+    else:
+        w = initial_w
+
     for n_iter in range(max_iters):
         grad = compute_gradient(y, tx, w)
         w = w - (gamma * grad)
@@ -27,7 +31,10 @@ def least_squares_GD(y, tx, initial_w, max_iters, gamma):
     return w, loss
 
 
-def least_squares_SGD(y, tx, initial_w, max_iters, gamma):
+
+
+
+def least_squares_SGD(y, tx, initial_w = None, max_iters = 1000, gamma = 0.01):
     """
     Linear regression using stochastic gradient descent
     
@@ -41,7 +48,11 @@ def least_squares_SGD(y, tx, initial_w, max_iters, gamma):
         loss (float): final loss after max_iterations
         w (ndarray): optimal weight vector
     """
-    w = initial_w
+    if (initial_w is None):
+        w = np.ones(tx.shape[1])
+    else:
+        w = initial_w
+
     batch_size = 100
 
     for n_iter in range(max_iters): 
@@ -115,7 +126,7 @@ def ridge_regression(y, tx, lambda_):
 #     return loss, w
 
 
-def logistic_regression(y, tx, initial_w, max_iters, gamma):
+def logistic_regression(y, tx, initial_w = None, max_iters = 1000, gamma = 0.01):
     """
     Logistic regression using gradient descent 
     we don't use Newton's method because computing hessian
@@ -131,10 +142,17 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
         loss (float): final loss after max_iterations
         w (ndarray): optimal weight vector
     """
+    # do you want to display progression ?
+    printed = False
+
+
     # init parameters
     threshold = 1e-8
     previous_loss = 0
-    w = initial_w
+    if initial_w is None:
+        w = np.ones(tx.shape[1])
+    else:
+        w = initial_w
     
     previous_loss = 0
     for n_iter in range(max_iters):
@@ -143,7 +161,7 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
         gradient = calculate_gradient_sigmoid(y, tx, w)
         w = w - gamma * gradient
         
-        if n_iter % 1000 == 0:
+        if printed and (n_iter % 1000 == 0):
             print("Current iteration={i}, the loss={l}, gradient={g}"
                   .format(i=n_iter, l=loss, g=np.linalg.norm(gradient)))
         # converge criteria
@@ -154,7 +172,8 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
     return w, loss
 
 
-def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
+def reg_logistic_regression(y, tx, lambda_, initial_w = None, \
+ max_iters = 1000, gamma = 0.01):
     """
     Regularized logistic regression using gradient descent or SGD
     Use L2 regularizer
@@ -169,10 +188,18 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
         loss (float): final loss after max_iterations
         w (ndarray): optimal weight vector
     """
+    # do you want to display progression ?
+    printed = False
+
+
     # init parameters
     threshold = 1e-8
     previous_loss = 0
-    w = initial_w
+    if initial_w is None:
+        w = np.ones(tx.shape[1])
+    else:
+        w = initial_w
+    
     
     previous_loss = 0
     for n_iter in range(max_iters):
@@ -182,7 +209,7 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
         gradient = calculate_gradient_sigmoid(y, tx, w)
         w = w - gamma * gradient
         
-        if n_iter % 1000 == 0:
+        if printed and (n_iter % 1000 == 0):
             print("Current iteration={i}, the loss={l}, gradient={g}"
                   .format(i=n_iter, l=loss, g=np.linalg.norm(gradient)))
         # converge criteria

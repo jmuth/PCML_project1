@@ -143,6 +143,64 @@ As our eight groups are well split, we discarded the features only containing \e
 Polynomial basis functions can be used to construct more complex and more powerful features, so we constructed a polynomial matrix of degree $d$ with our feature matrix. The degree was chosen by a 4-fold cross validation and is different for each of our 8 groups.
 
 \section{Model selection}
+
+
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}[c]{| l | c | c | l | c | c |}
+    \hline
+    Method 	     & te\_loss & accuray \% \\
+    \hline
+    \hline 
+    Least Squares 			& 0.81		& 75.16	    \\
+    Least Squares GD 		& 0.84		& 72.70 	    \\
+    Least Squares SGD 		& 0.83		& 73.54	    \\
+    Ridge Regression 			& 0.82  		& 74.88	\\
+    Logistic Regression		& 666.42  		& 72.14 	\\
+    Regularized Logistic Regr.  	& 666.42  		& 72.14 	\\
+\hline
+  \end{tabular}
+  \caption{Benchmark of six different methods}
+  \label{tab:methods}
+\end{table}
+
+
+
+%
+%-------------------------
+%Least squares: 
+%te_loss = 0.81
+%accuracy = 0.75
+%-------------------------
+%Least squares GD: 
+%te_loss = 0.84
+%accuracy = 0.73
+%-------------------------
+%Least squares SGD: 
+%te_loss = 0.83
+%accuracy = 0.74
+%-------------------------
+%Ridge Regression: 
+%te_loss = 0.82
+%accuracy = 0.75
+%-------------------------
+%Logistic Regression: 
+%te_loss = 666.42
+%accuracy = 0.72
+%-------------------------
+%Logistic Regression: 
+%te_loss = 666.42
+%accuracy = 0.72
+
+
+
+
+
+
+
+
+
+
 We only considered ridge regression for linear regression models because optimal $w$ can be derived directly without gradient descent approximation. Ridge regression can also penalize overfitting caused by high polynomial degrees. We also tried logistic regression, which seems to be more suitable for such classification.
 
 \subsection{Ridge Regression}
@@ -150,9 +208,10 @@ We applied a 2-steps grid-search method on each of the eight groups for two para
 
 \begin{table}[htbp]
   \centering
-  \begin{tabular}[c]{| l | c | c | l | c | c |}
+  \begin{tabular}[c]{| l | c | c || l | c | c |}
     \hline
     Subset 	     & lambda & degree & Subset     & lambda      & degree \\
+    \hline
     \hline 
     jet0 no mass & 1.599e-05	& 2	 & jet0 mass  & 3.237e-05  & 2	\\
     jet1 no mass & 0.1526		  & 13 & jet1 mass  & 3.237e-05  & 2 	\\
