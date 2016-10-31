@@ -10,7 +10,7 @@ Junze Bao, SCIPER 266983, junze.bao@epfl.ch
 Chanhee Hwang, SCIPER 260872, chanhee.hwang@epfl.ch
 
 
-# Environment
+## Environment
 !IMPORTANT: We utilized the syntax of **"@"** when multiplying two matrices, and this syntax is only available in **Python3.5+**, so be sure to check the version of your local **/usr/local/bin/python**, which is the default runner if you run the script *run.py* directly by calling `./run.py`. Otherwise, explicitly specify python with the correct version, e.g. `python3 run.py`.
 
 
