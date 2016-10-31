@@ -1,3 +1,4 @@
+#!/usr/local/bin/python
 import helpers    # you need to use load_csv_data
 import api    # use train/predict method below
 import numpy as np
@@ -16,7 +17,7 @@ def run():
 	#LAMBDAS = lambdas_star
 	#DEGREES = degrees_star
 
-	LAMBDAS = [1.59985871961e-05, 3.23745754282e-05, 0.152641796718, 3.23745754282e-05, 0.0184206996933, 7.90604321091e-06, 0.625055192527, 0.00910298177992] 
+	LAMBDAS = [1.59985871961e-05, 3.23745754282e-05, 0.152641796718, 3.23745754282e-05, 0.0184206996933, 7.90604321091e-06, 0.625055192527, 0.00910298177992]
 	DEGREES = [2, 2, 13, 2, 2, 3, 3, 3]
 
 
@@ -54,4 +55,3 @@ def run():
 
 if __name__ == '__main__':
 	run()
-

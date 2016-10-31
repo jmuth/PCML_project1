@@ -31,9 +31,6 @@ def least_squares_GD(y, tx, initial_w = None, max_iters = 1000, gamma = 0.01):
     return w, loss
 
 
-
-
-
 def least_squares_SGD(y, tx, initial_w = None, max_iters = 1000, gamma = 0.01):
     """
     Linear regression using stochastic gradient descent
@@ -53,7 +50,7 @@ def least_squares_SGD(y, tx, initial_w = None, max_iters = 1000, gamma = 0.01):
     else:
         w = initial_w
 
-    batch_size = 100
+    batch_size = 5000
 
     for n_iter in range(max_iters): 
         grad = compute_stoch_gradient(y, tx, w, batch_size)
@@ -102,28 +99,16 @@ def ridge_regression(y, tx, lambda_):
             |              |                    |
         first_part   second_part           third_part 
     """
-    lambda_prime = lambda_ * 2 * len(y)
+    lambda_prime = lambda_ * 2 * len(y)  # 2N*lamb*Im
     
     first_part = tx.T @ tx
-    second_part = lambda_prime * np.identity(tx.shape[1])   # 2N*lamb*Im
+    second_part = lambda_prime * np.identity(tx.shape[1])
     third_part = tx.T @ y
     w = np.linalg.solve(first_part+second_part, third_part)
     
     loss = calculate_loss(y, tx, w, 'ls')
 
     return w, loss
-
-# def ridge_regression_GD(y, tx, lambda_, max_iter=10000):
-#     lambda_prime = lambda_ * 2 * len(y)
-
-#     first_part = tx.T @ tx
-#     second_part = lambda_prime * np.identity(tx.shape[1])   # 2N*lamb*Im
-#     third_part = tx.T @ y
-#     optimal_w = np.linalg.solve(first_part+second_part, third_part)
-    
-#     loss = calculate_loss(y, tx, w)
-
-#     return loss, w
 
 
 def logistic_regression(y, tx, initial_w = None, max_iters = 1000, gamma = 0.01):

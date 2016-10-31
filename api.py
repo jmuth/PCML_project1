@@ -18,7 +18,7 @@ def train(y, x, poly, split_method, replace, cv, cut, model_func, lambdas=None, 
         x (ndarray): feature matrix
         poly (int): degree of polynomial functions; don't use poly function when it's None
         split_method (str): split based on 'jet' or 'mass'; don't split when it's None
-        replace (str): the method used to calculate the substitute for missing value; 
+        replace (str): the method used to calculate the substitute for missing value;
                        don't replace when it's None
         cv (boolean): Cross validation
         cut (float): paritition value when predicting y
@@ -26,8 +26,8 @@ def train(y, x, poly, split_method, replace, cv, cut, model_func, lambdas=None, 
         *args, **kwargs, arguments of the model_func
 
     Return:
-        when split is not None, return a list of w of each groups; otherwise, just one 
-        w. when cv is True, the aforementioned return value contains not only w, but 
+        when split is not None, return a list of w of each groups; otherwise, just one
+        w. when cv is True, the aforementioned return value contains not only w, but
         train loss, test loss and accuracy of each round of cross validation.
     """
 
@@ -52,7 +52,6 @@ def train(y, x, poly, split_method, replace, cv, cut, model_func, lambdas=None, 
         return w
 
 
-    
 def _inner_train(y, x, poly, replace, cv, cut, model_func, *args, **kwargs):
     """
     private inner train function
@@ -77,7 +76,7 @@ def _inner_train(y, x, poly, replace, cv, cut, model_func, *args, **kwargs):
 
 def predict(test_y, test_x, test_ids, cut, w, poly, split_method, replace, loss_method='log', res_to_file=True):
     """
-    this function serves as a public API for predicting 
+    this function serves as a public API for predicting
 
     Params:
         test_y (ndarray): target variable
@@ -87,7 +86,7 @@ def predict(test_y, test_x, test_ids, cut, w, poly, split_method, replace, loss_
         w (ndarray): obtained by training
         poly (int): degree of polynomial functions; don't poly when it's None
         split_method (str): split based on 'jet' or 'mass'; don't split when it's None
-        replace (str): the method used to calculate the substitute for missing value; 
+        replace (str): the method used to calculate the substitute for missing value;
                        don't replace when it's None
         loss_method (str): specify which loss function to use
         res_to_file (boolean): whether save the prediction results to file
@@ -107,7 +106,7 @@ def predict(test_y, test_x, test_ids, cut, w, poly, split_method, replace, loss_
             else:
                 # different poly for each regression
                 pred_y = _inner_predict(cut, w[index], sub_x, poly[index], replace, loss_method)
-            
+
             res.update(dict(zip(test_ids[id_indices], pred_y)))
         # sort res
         res = OrderedDict(sorted(res.items()))
@@ -118,7 +117,7 @@ def predict(test_y, test_x, test_ids, cut, w, poly, split_method, replace, loss_
         pred_y = _inner_predict(cut, w, test_x, poly, replace, loss_method)
         if res_to_file:
             create_csv_submission(test_ids, pred_y, 'predict.csv')
-        
+
         return pred_y
 
 
@@ -136,4 +135,3 @@ def _inner_predict(cut, w, x, poly, replace, loss_method):
     tx = standardize(x)[0]
     pred_y = predict_labels(cut, w, tx, loss_method)
     return pred_y
-
