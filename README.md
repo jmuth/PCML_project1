@@ -44,5 +44,3 @@ Apart from the provided modules, we also have other 8 python module files to pro
 6. *helpers.py*: We added several functions to make this module richer than the provided one. *replace_num()* can be used to deal with missing values, i.e. replace missing value with median or mean value of others. *build_poly()* helps us to construct more complex polynomial feature matrix. We add one argument to *predict_labels()* to correlate the prediction method with training method.
 
 7. *search_parameters.py*: It allows us to do cross validation to find best parameters for each group.
-
-8. *method_comparison.py*: It allows us to compare the accuracy of each model and then choose the best one.
