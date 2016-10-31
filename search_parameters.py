@@ -24,17 +24,21 @@ def _inner_search(y, x, degrees, lambdas, optimize_on="te_loss"):
 
 	return best
 
-def load_and_search(sample = True, optimize_on = "te_loss"):
+def load_and_search(sample = True, optimize_on = "te_loss", split_method = 'mass', standardization = False):
 
 	# load the data
 	print("load train set")
 	y, x, _ = helpers.load_csv_data('data/train.csv', sub_sample = sample, background_value = -1)
 
+	if standardization == True:
+		y, _, _ = helpers.standardize_by_mean(y)
+		x, _, _ = helpers.standardize_by_mean(x)
+
 	#search
-	return search(y, x, optimize_on)
+	return search(y, x, optimize_on, split_method = split_method)
 
 
-def search(y, x, optimize_on="te_loss"):
+def search(y, x, optimize_on="te_loss", split_method = 'mass'):
 	"""
 	Do a two-step parameter step between degree (2 to 15) and lambda (e-10 to e5) for Ridge Regression 
 	method using 4-fold cross validation
@@ -50,11 +54,11 @@ def search(y, x, optimize_on="te_loss"):
 
         
 	# split the data (8 model)
-	split_train = split.split(y, x, method='mass')
+	split_train = split.split(y, x, method= split_method)
 
 	# large range of parameter
 	degrees = range(2, 15)
-	lambdas = np.logspace(-10, 5)
+	lambdas = np.logspace(-5, 10)
 
 
 	lambdas_star = []

@@ -128,9 +128,6 @@ We then obtained four groups with sizes of 99913, 77544, 50379 and 22164 respect
 \subsection{Standardization/Normalization}
 In order to work on comparable data, and not to overweight some of them, we apply standardization to raw dataset before any further processes. Normalization, rescaling the raw data down to range $[0, 1]$, is also applied to reduce te complexity of computation so as to avoid potential expoenential overflow when using logsitic regression model.
 
-\subsection{Feature selection}
-As our eight groups are well split, we discarded the features only containing \emph{NaN} values. All of the remaining features have meaningful real values, but this does not mean that they are all useful. The histograms of their frequencies show candidates of possibly useless features which have almost no variance. % (see figure \ref{hist})
-
 \begin{figure}[tbp] %-------TIKZ PICTURE---------
   \centering
   \includegraphics[width=\columnwidth]{img/cross_validation_lot.pdf}
@@ -139,10 +136,30 @@ As our eight groups are well split, we discarded the features only containing \e
   \label{param}
 \end{figure}
 
+\subsection{Feature selection}
+As our eight groups are well split, we discarded the features only containing \emph{NaN} values. All of the remaining features have meaningful real values, but this does not mean that they are all useful. The histograms of their frequencies show candidates of possibly useless features which have almost no variance. % (see figure \ref{hist})
+
+
+
 \subsection{Polynomial building}
 Polynomial basis functions can be used to construct more complex and more powerful features, so we constructed a polynomial matrix of degree $d$ with our feature matrix. The degree was chosen by a 4-fold cross validation and is different for each of our 8 groups.
 
 \section{Model selection}
+
+\subsection{Models descriptions}
+
+\subsubsection{Least Squares}
+LS resolves the matrix equation between $x^T x \cdot w= x^T y $ to find w. Mathematicaly perfectly correct, its big drawback comes from it high sensitivity to outliers and multicollinear dataset, which is often the case when analysing real-world data.
+\subsubsection{Least Squares Gradient Descent}
+LSGD starts from a initial $w$ matrix and iteratively improves it depending of the gradient $g = \frac{x^T \cdot y-x w}{ \# variables}$. It presents the same weaknesses as LS but provides faster calculation, especially its stochastic variant explained below. 
+\subsubsection{Least Squares Stochastic Gradient Descent}
+Insted of calculating the whole gradient in each iteration as LSGD, LSSGD selects an arbitrary number of small random subsets and calculate the mean between all the their gradient. It's a fast variant of LSGD. The bias  introduced by working with small subsets is compensate by the iterative process.
+\subsubsection{Ridge Regression}
+RR add a regularization term $\lambda$ to the matrix $x^T x$ in order to counter the multicollinearity problem. This $\lambda$ is empirically defined.
+\subsubsection{Logistique Regression}
+LR is based on $\sigma(x) = \frac{e^x}{1 + e^x}$ function which better scales classification problem where $y$'s vector is composed of 
+\subsubsection{Regularized Logistique Regression}
+
 
 
 \begin{table}[htbp]
