@@ -128,38 +128,48 @@ We then obtained four groups with sizes of 99913, 77544, 50379 and 22164 respect
 \subsection{Standardization/Normalization}
 In order to work on comparable data, and not to overweight some of them, we apply standardization to raw dataset before any further processes. Normalization, rescaling the raw data down to range $[0, 1]$, is also applied to reduce te complexity of computation so as to avoid potential expoenential overflow when using logsitic regression model.
 
-\begin{figure}[tbp] %-------TIKZ PICTURE---------
-  \centering
-  \includegraphics[width=\columnwidth]{img/cross_validation_lot.pdf}
-  \caption{Grid search for parameter selection $d$ and $\lambda$ on the eight data subsets. }
-  \vspace{-3mm}
-  \label{param}
-\end{figure}
-
 \subsection{Feature selection}
 As our eight groups are well split, we discarded the features only containing \emph{NaN} values. All of the remaining features have meaningful real values, but this does not mean that they are all useful. The histograms of their frequencies show candidates of possibly useless features which have almost no variance. % (see figure \ref{hist})
-
-
 
 \subsection{Polynomial building}
 Polynomial basis functions can be used to construct more complex and more powerful features, so we constructed a polynomial matrix of degree $d$ with our feature matrix. The degree was chosen by a 4-fold cross validation and is different for each of our 8 groups.
 
 \section{Model selection}
 
-\subsection{Models descriptions}
+% \subsection{Models descriptions}
 
-\subsubsection{Least Squares}
-LS resolves the matrix equation between $x^T x \cdot w= x^T y $ to find w. Mathematicaly perfectly correct, its big drawback comes from it high sensitivity to outliers and multicollinear dataset, which is often the case when analysing real-world data.
-\subsubsection{Least Squares (Stochastic) Gradient Descent}
-LSGD starts from a initial $w$ matrix and iteratively improves it depending of the gradient $g = \frac{x^T \cdot y-x w}{ \# variables}$. It presents the same weaknesses as LS but provides faster calculation, especially its stochastic variant which select an arbitrary number of small random subsets and calculate the mean between all the their gradient.
-\subsubsection{Ridge Regression}
-RR add a regularization term $\lambda$ to the matrix $x^T x$ in order to counter the multicollinearity problem. This $\lambda$ is empirically defined.
-\subsubsection{(Regularized) Logistique Regression}
-LR is based on $\sigma(x) = \frac{e^x}{1 + e^x}$ function which better scales classification problem where $y$ vector is composed of binary solutions $\{0, 1\}$. It works in a iteratively way by improving $w$ through gradient calculation.
+% \subsubsection{Least Squares}
+% LS resolves the matrix equation between $x^T x \cdot w= x^T y $ to find w. Mathematicaly perfectly correct, its big drawback comes from it high sensitivity to outliers and multicollinear dataset, which is often the case when analysing real-world data.
+% \subsubsection{Least Squares Gradient Descent}
+% LSGD starts from a initial $w$ matrix and iteratively improves it depending of the gradient $g = \frac{x^T \cdot y-x w}{ \# variables}$. It presents the same weaknesses as LS but provides faster calculation, especially its stochastic variant explained below. 
+% \subsubsection{Least Squares Stochastic Gradient Descent}
+% Insted of calculating the whole gradient in each iteration as LSGD, LSSGD selects an arbitrary number of small random subsets and calculate the mean between all the their gradient. It's a fast variant of LSGD. The bias  introduced by working with small subsets is compensate by the iterative process.
+% \subsubsection{Ridge Regression}
+% RR add a regularization term $\lambda$ to the matrix $x^T x$ in order to counter the multicollinearity problem. This $\lambda$ is empirically defined.
+% \subsubsection{Logistique Regression}
+% LR is based on $\sigma(x) = \frac{e^x}{1 + e^x}$ function which better scales classification problem where $y$'s vector is composed of 
+% \subsubsection{Regularized Logistique Regression}
 
 
 
-
+% \begin{table}[htbp]
+%   \centering
+%   \begin{tabular}[c]{| l | c | c | l | c | c |}
+%     \hline
+%     Method 	     & te\_loss & accuray \% \\
+%     \hline
+%     \hline 
+%     Least Squares 			& 0.81		& 75.16	    \\
+%     Least Squares GD 		& 0.84		& 72.70 	    \\
+%     Least Squares SGD 		& 0.83		& 73.54	    \\
+%     Ridge Regression 			& 0.82  		& 74.88	\\
+%     Logistic Regression		& 666.42  		& 72.14 	\\
+%     Regularized Logistic Regr.  	& 666.42  		& 72.14 	\\
+% \hline
+%   \end{tabular}
+%   \caption{Benchmark of six different methods}
+%   \label{tab:methods}
+% \end{table}
 
 
 
@@ -190,71 +200,49 @@ LR is based on $\sigma(x) = \frac{e^x}{1 + e^x}$ function which better scales cl
 %accuracy = 0.72
 
 
-
-
-\subsection{Models comparison}
-
-
-
-
-
 We only considered ridge regression for linear regression models because optimal $w$ can be derived directly without gradient descent approximation. Ridge regression can also penalize overfitting caused by high polynomial degrees. We also tried logistic regression, which seems to be more suitable for such classification.
 
-
-\begin{table}[htbp]
-  \centering
-  \begin{tabular}[c]{| l | c | c | l | c | c |}
-    \hline
-    Method 	     & te\_loss & accuray \% \\
-    \hline
-    \hline 
-    Least Squares 			& 0.81		& 75.16	    \\
-    Least Squares GD 		& 0.84		& 72.70 	    \\
-    Least Squares SGD 		& 0.83		& 73.54	    \\
-    Ridge Regression 			& 0.82  		& 74.88	\\
-    Logistic Regression		& 666.42  		& 72.14 	\\
-    Regularized Logistic Regr.  	& 666.42  		& 72.14 	\\
-\hline
-  \end{tabular}
-  \caption{Benchmark of six different models}
-  \label{tab:methods}
-\end{table}
-
-
 \subsection{Ridge Regression}
-We applied a 2-steps grid-search method on each of the eight groups for two parameters: \textbf{polynomial degree} $d \in [0, 15]$ and \textbf{regularization parameter} $\lambda \in [1^{-10}, 1]$.  Each pair of parameters is tested through a 4-fold cross-validation and scored by RMSE error. Figure \ref{param} shows the result. {\color{red}Once the best parameters are chosen for each subsets, we zoomed on them and applied again a grid-search on the zoomed interval, to gain precision}. Table \ref{tab:param} sums up the chosen parameters.
+We applied a 2-steps grid-search method on each of the eight groups for two parameters: polynomial degree $d \in [0, 15]$ and regularization parameter $\lambda \in [1^{-10}, 1]$.  Each pair of parameters is tested through a 4-fold cross-validation and scored by RMSE error. Figure \ref{param} shows the result. Once the best parameters among the intial ranges are chosen for each groups, we narrowed the range and applied again the similar approach to gain more precise parameters. Table \ref{tab:param} sums up the chosen parameters.
+
+
+\begin{figure}[tbp] %-------TIKZ PICTURE---------
+  \centering
+  \includegraphics[width=\columnwidth]{img/cross_validation_lot.pdf}
+  \caption{Grid search for parameter selection $d$ and $\lambda$ on the eight data subsets. }
+  \vspace{-3mm}
+  \label{param}
+\end{figure}
+
+\subsection{Logistic Regression}
+We chose L2-regularized logistic regression for fear of overfitting due to using polynomials. We preset a range of lambdas and degrees, followed by using cross validation to test which pair of parameters produces the best accuracy \footnote{accuracy is calculated as the division of the number of correctly predicted values over the total number of events} for all groups. 
+
+We can still get a real value probablity with logistic regression, although that value will be compared with partition value \footnote{typically the 0.5} when predicting specific class labels. Thus we tried 20 partition values in range $[0.3, 0.8]$, and conclude 0.43 is the best choice for this case because local cross validation accuracy reached the top at that value.
+
+Although we achieved 83\% in local cross validation, eventually we only achieved 76\% in Kaggle with the following parameters: $n_iters = 50000, gamma = 0.000001, lambda_ = 0.01, initial_w = np.zeros(90), cut = 0.43, poly = 2$.
 
 \begin{table}[htbp]
   \centering
   \begin{tabular}[c]{| l | c | c || l | c | c |}
     \hline
-    Subset 	     & lambda & degree & Subset     & lambda      & degree \\
+    Subset       & lambda & degree & Subset     & lambda      & degree \\
     \hline
     \hline 
-    jet0 no mass & 1.599e-05	& 2	 & jet0 mass  & 3.237e-05  & 2	\\
-    jet1 no mass & 0.1526		  & 13 & jet1 mass  & 3.237e-05  & 2 	\\
-    jet2 no mass & 0.0184		  & 2	 & jet2 mass  & 7.906e-06  & 3 	\\
-    jet3 no mass & 0.6250		  & 3	 & jet3 mass  & 0.0091     & 3  \\
+    jet0 no mass & 1.599e-05  & 2  & jet0 mass  & 3.237e-05  & 2  \\
+    jet1 no mass & 0.1526     & 13 & jet1 mass  & 3.237e-05  & 2  \\
+    jet2 no mass & 0.0184     & 2  & jet2 mass  & 7.906e-06  & 3  \\
+    jet3 no mass & 0.6250     & 3  & jet3 mass  & 0.0091     & 3  \\
     \hline
   \end{tabular}
   \caption{Selected parameters of Ridge Regression}
   \label{tab:param}
 \end{table}
 
-
-\subsection{Logistic Regression}
-We chose regularized logistic regression for fear of overfitting due to using polynomials. We preset a range of lambdas and degrees, followed by using cross validation to test which pair of parameters produces the best accuracy \footnote{accuracy is calculated as the division of the number of correctly predicted values over the total number of events} for all groups. 
-
-We can still get a real value probablity with logistic regression, although that value will be compared with partition value \footnote{typically the 0.5} when predicting specific class labels. Thus we tried 20 partition values in range $[0.3, 0.8]$, and conclude 0.43 is the best choice for this case because local cross validation accuracy reached the top at that value.
-
-Although we achieved 83\% in local cross validation, eventually we only achieved 76\% in Kaggle with the following parameters: $n_iters = 50000, gamma = 0.000001, lambda_ = 0.01, initial_w = np.zeros(90), cut = 0.43, poly = 2$.
-
-
 \subsection{Other experiments}
 \begin{enumerate}
-\item We also tried not to split the dataset into 8 groups, but 4 groups based on jet number or even no groups at all, but expectedly the accuracy did not improve {\color{red} we can add some statistics here}. 
-\item When the train dataset is treated as a whole, we thought it would be better to deal with \textit{NaN} values, e.g. replacing $-999$ with the mean or median value of all other events. However unexpectedly the accuracy went down dramatically. 
-\item {\color{red}any other experiments you did ??????}
+\item We also tried not to split the dataset into 8 groups, but 4 groups based on jet number or even no groups at all, but expectedly the accuracy did not improve. The (mean) accuracies of no group, 4 groups and 8 groups are 70.19\%, 72.19\% and 80.63\% respectively.
+\item When the train dataset is treated as a whole, we thought it would be better to deal with \textit{NaN} values, e.g. replacing $-999$ with the mean or median value of all other events. However unexpectedly the accuracy went down dramatically, e.g. from XXX\% to 71.71\% when replacing with mean value.
+\item Another intuition is to increase the polynomial degree to get more complex model, but we noticed when degree is more than {\color{red}XX}, in cross validation the test error increases while the train error decreases, which means overfitting to some extent. We then stop increasing and used the maximum value of degree where the test error and train error are still close. 
 \end{enumerate}
 
 %========================
@@ -290,9 +278,9 @@ Although we achieved 83\% in local cross validation, eventually we only achieved
 
 %========================
 \section{Summary}
-Both models gave us an accuracy of more than $80\%$ when tested by 4-fold cross validation locally. However the accuracy against test dataset only scored $77.748\%$ on Kaggle with ridge regression.
+Regularized logistic regression unexpectedly did not give us the best results, while regularized ridge regression works better. Different events have different characteristics, so it is better to separate them based on different features. However, it is tricky to deal with missing values, which has no meaning in physics. Plus, missing value would not be a problem if we separated based on them, which we think should be a better way to deal with missing value.
 
-The fact that the prediction is better on the local test than in {\color{blue}\href{https://www.kaggle.com}{Kaggle.com}} indicates there might be some overfitting on our training method. {\color{red}However, train error and test error are close as shown in cross validation charts. Right?} more summary
+The model gave us an accuracy of more than $80\%$ when tested by 4-fold cross validation locally. However the accuracy against test dataset only scored $77.748\%$ on Kaggle with ridge regression.
 
 
 \bibliographystyle{IEEEtran}
