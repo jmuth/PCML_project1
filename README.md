@@ -10,7 +10,7 @@ Junze Bao, SCIPER 266983, junze.bao@epfl.ch
 Chanhee Hwang, SCIPER 260872, chanhee.hwang@epfl.ch
 
 
-## Environment
+## Environment & Run
 !IMPORTANT: We utilized the syntax of **"@"** when multiplying two matrices, and this syntax is only available in **Python3.5+**, so be sure to check the version of your local **/usr/local/bin/python**, which is the default runner if you run the script *run.py* directly by calling `./run.py`. Otherwise, explicitly specify python with the correct version, e.g. `python3 run.py`.
 
 
@@ -25,7 +25,7 @@ With k-cross validation method, we will experiment locally with various paramete
 ## Implementations of six model functions
 All methods follow a similar procedure: first obtain the optimal *w* either by (stochastic) gradient descent or normal equations, and then calculate the loss with optimal *w*.
 
-\# TODO: add more description!
+Implementations of these six functions basically follow the lecture notes. In `least_squares_SGD` we set `batch_size` to be 5000 due to the large amount of train dataset. Similar to ridge regression, we used a L2 regularizer for `reg_logistic_regression`.
 
 
 ## Other modules
