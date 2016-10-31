@@ -35,7 +35,7 @@
 
 %========================
 \begin{abstract}
-This report presents our work for the first project of PCML course. The project mainly contains two parts: one is to implement six basic model functions and the other is to make predictions for physics particles in a Kaggle competition. With the help of dataset documentation and illustration tables and charts, we found that the train dataset can be separated into eight groups with different number of features. We then applied previously implemented ridge regression and logistic regression model to each group to finally achieve an accuracy of {\color{red} 77\% with ridge regression (TBD)}.
+This report presents our work for the first project of PCML course. The project mainly contains two parts: one is to implement six basic model functions and the other is to make predictions for physics particles in a Kaggle competition. With the help of dataset documentation and illustration tables and charts, we found that the train dataset can be separated into eight groups with different numbers of features. We then applied previously implemented ridge regression and logistic regression models to each group to finally achieve an accuracy of {\color{red} 77\% with ridge regression (TBD)}.
 \end{abstract}
 
 %========================
@@ -51,11 +51,11 @@ The test dataset consists of $N_{te} = 568238$ events ($ID \in [350000, 918237]$
 We preprocessed our data and did some feature exploration before selecting a model.
 
 \subsection{Split data}
-In order to determine the importance of each feature, and to deal with the great number of \emph{NaN} in the dataset, we first analyzed their distrubutions. 
+In order to determine the importance of each feature, and to deal with the great number of \emph{NaN} in the dataset, we first analyzed their distributions. 
 
 \cite{higgsChallenge} shows that it is possible to categorize the events into four different groups based on the value of jet number (\emph{int} $\in [0, 3]$), for the fact that some measures are not defined when jet number is a certain value. During the split, we removed the feature jet number for each group because it is always the same value within each group. As mentioned in the data description, the last feature is a sum of all other features. We also removed this feature due to this reason. 
 
-We then obtained four groups with sizes of 99913, 77544, 50379 and 22164 respectively. By skimming through the dataset, we found there are still many undefined values in the first feature $DER\_mass\_MMC$, so we further split each group into two subgroups, one with meaningful mass value $m_H$ and the mass value of the other is \emph{NaN}. Finally we have eight different subgroups.% (see figure \ref{split})
+We then obtained four groups with sizes of 99913, 77544, 50379 and 22164 respectively. By skimming through the dataset, we found there are still many undefined values in the first feature $DER\_mass\_MMC$, so we further split each group into two subgroups, one with meaningful mass value $m_H$ and the mass value of the other is \emph{NaN}. Finally, we have eight different subgroups.% (see figure \ref{split})
 
 % \begin{figure}[tbp] %-------TIKZ PICTURE---------
 %   \centering
@@ -126,7 +126,7 @@ We then obtained four groups with sizes of 99913, 77544, 50379 and 22164 respect
 
 
 \subsection{Standardization/Normalization}
-In order to work on comparable data, and not to overweight some of them, we apply standardization to raw dataset before any further processes. Normalization, rescaling the raw data down to range $[0, 1]$, is also applied to reduce te complexity of computation so as to avoid potential expoenential overflow when using logsitic regression model.
+In order to work on comparable data, and not to overweight some of them, we apply standardization to raw datasets before any further processes. Normalization, rescaling the raw data down to range $[0, 1]$, is also applied to reduce the complexity of computation so as to avoid potential exponential overflow when using logistic regression model.
 
 \subsection{Feature selection}
 As our eight groups are well split, we discarded the features only containing \emph{NaN} values. All of the remaining features have meaningful real values, but this does not mean that they are all useful. The histograms of their frequencies show candidates of possibly useless features which have almost no variance. % (see figure \ref{hist})
@@ -203,7 +203,7 @@ Polynomial basis functions can be used to construct more complex and more powerf
 We only considered ridge regression for linear regression models because optimal $w$ can be derived directly without gradient descent approximation. Ridge regression can also penalize overfitting caused by high polynomial degrees. We also tried logistic regression, which seems to be more suitable for such classification.
 
 \subsection{Ridge Regression}
-We applied a 2-steps grid-search method on each of the eight groups for two parameters: polynomial degree $d \in [0, 15]$ and regularization parameter $\lambda \in [1^{-10}, 1]$.  Each pair of parameters is tested through a 4-fold cross-validation and scored by RMSE error. Figure \ref{param} shows the result. Once the best parameters among the intial ranges are chosen for each groups, we narrowed the range and applied again the similar approach to gain more precise parameters. Table \ref{tab:param} sums up the chosen parameters.
+We applied a 2-steps grid-search method on each of the eight groups for two parameters: polynomial degree $d \in [0, 15]$ and regularization parameter $\lambda \in [1^{-10}, 1]$.  Each pair of parameters is tested through a 4-fold cross-validation and scored by RMSE error. Figure \ref{param} shows the result. Once the best parameters among the initial ranges are chosen for each group, we narrowed the range and applied again the similar approach to gain more precise parameters. Table \ref{tab:param} sums up the chosen parameters.
 
 
 \begin{figure}[tbp] %-------TIKZ PICTURE---------
@@ -217,7 +217,7 @@ We applied a 2-steps grid-search method on each of the eight groups for two para
 \subsection{Logistic Regression}
 We chose L2-regularized logistic regression for fear of overfitting due to using polynomials. We preset a range of lambdas and degrees, followed by using cross validation to test which pair of parameters produces the best accuracy \footnote{accuracy is calculated as the division of the number of correctly predicted values over the total number of events} for all groups. 
 
-We can still get a real value probablity with logistic regression, although that value will be compared with partition value \footnote{typically the 0.5} when predicting specific class labels. Thus we tried 20 partition values in range $[0.3, 0.8]$, and conclude 0.43 is the best choice for this case because local cross validation accuracy reached the top at that value.
+We can still get a real value probability with logistic regression, although that value will be compared with partition value \footnote{typically the 0.5} when predicting specific class labels. Thus we tried 20 partition values in range $[0.3, 0.8]$, and conclude 0.43 is the best choice for this case because local cross validation accuracy reached the top at that value.
 
 Although we achieved 83\% in local cross validation, eventually we only achieved 76\% in Kaggle with the following parameters: $n_iters = 50000, gamma = 0.000001, lambda_ = 0.01, initial_w = np.zeros(90), cut = 0.43, poly = 2$.
 
@@ -240,9 +240,9 @@ Although we achieved 83\% in local cross validation, eventually we only achieved
 
 \subsection{Other experiments}
 \begin{enumerate}
-\item We also tried not to split the dataset into 8 groups, but 4 groups based on jet number or even no groups at all, but expectedly the accuracy did not improve. The (mean) accuracies of no group, 4 groups and 8 groups are 70.19\%, 72.19\% and 80.63\% respectively.
+\item We also tried not to split the dataset into 8 groups, but 4 groups based on jet numbers or even no groups at all, but expectedly the accuracy did not improve. The (mean) accuracies of no group, 4 groups and 8 groups are 70.19\%, 72.19\% and 80.63\% respectively.
 \item When the train dataset is treated as a whole, we thought it would be better to deal with \textit{NaN} values, e.g. replacing $-999$ with the mean or median value of all other events. However unexpectedly the accuracy went down dramatically, e.g. from XXX\% to 71.71\% when replacing with mean value.
-\item Another intuition is to increase the polynomial degree to get more complex model, but we noticed when degree is more than {\color{red}XX}, in cross validation the test error increases while the train error decreases, which means overfitting to some extent. We then stop increasing and used the maximum value of degree where the test error and train error are still close. 
+\item Another intuition is to increase the polynomial degree to get more complex models, but we noticed when degree is more than {\color{red}XX}, in cross validation the test error increases while the train error decreases, which means overfitting to some extent. We then stop increasing and used the maximum value of degree where the test error and train error are still close. 
 \end{enumerate}
 
 %========================
