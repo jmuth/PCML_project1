@@ -35,7 +35,7 @@
 
 %========================
 \begin{abstract}
-This report presents our work for the first project of PCML course. The project mainly contains two parts: one is to implement six basic model functions and the other is to make predictions for physics particles in a Kaggle competition. With the help of dataset documentation and illustration tables and charts, we found that the train dataset can be separated into eight groups with different numbers of features. We then applied previously implemented ridge regression and logistic regression models to each group to finally achieve an accuracy of {\color{red} 77\% with ridge regression (TBD)}.
+This report presents our work for the first project of PCML course. The project mainly contains two parts: one is to implement six basic model functions and the other is to make predictions for physics particles in a Kaggle competition. With the help of dataset documentation and illustration tables and charts, we found that the train dataset can be separated into eight groups with different numbers of features. We then applied previously implemented ridge regression and logistic regression models to each group to finally achieve an accuracy of 77\% with ridge regression at Kaggle.
 \end{abstract}
 
 %========================
@@ -162,7 +162,7 @@ Polynomial basis functions can be used to construct more complex and more powerf
 %     Least Squares 			& 0.81		& 75.16	    \\
 %     Least Squares GD 		& 0.84		& 72.70 	    \\
 %     Least Squares SGD 		& 0.83		& 73.54	    \\
-%     Ridge Regression 			& 0.82  		& 74.88	\\
+%     Ridge Regression 			& 0.82  		& 75.88	\\
 %     Logistic Regression		& 666.42  		& 72.14 	\\
 %     Regularized Logistic Regr.  	& 666.42  		& 72.14 	\\
 % \hline
@@ -241,8 +241,8 @@ Although we achieved 83\% in local cross validation, eventually we only achieved
 \subsection{Other experiments}
 \begin{enumerate}
 \item We also tried not to split the dataset into 8 groups, but 4 groups based on jet numbers or even no groups at all, but expectedly the accuracy did not improve. The (mean) accuracies of no group, 4 groups and 8 groups are 70.19\%, 72.19\% and 80.63\% respectively.
-\item When the train dataset is treated as a whole, we thought it would be better to deal with \textit{NaN} values, e.g. replacing $-999$ with the mean or median value of all other events. However unexpectedly the accuracy went down dramatically, e.g. from XXX\% to 71.71\% when replacing with mean value.
-\item Another intuition is to increase the polynomial degree to get more complex models, but we noticed when degree is more than {\color{red}XX}, in cross validation the test error increases while the train error decreases, which means overfitting to some extent. We then stop increasing and used the maximum value of degree where the test error and train error are still close. 
+\item When the train dataset is treated as a whole, we thought it would be better to deal with \textit{NaN} values, e.g. replacing $-999$ with the mean or median value of all other events. However unexpectedly the accuracy went down dramatically by 3\% when replacing with mean value.
+\item Another intuition is to increase the polynomial degree to get more complex models, but we noticed when degree is more than 6, cross validation the test error increases while the train error decreases, which means overfitting to some extent. We then stop increasing and used the maximum value of degree where the test error and train error are still close. 
 \end{enumerate}
 
 %========================
@@ -277,10 +277,11 @@ Although we achieved 83\% in local cross validation, eventually we only achieved
 
 
 %========================
-\section{Summary}
-Regularized logistic regression unexpectedly did not give us the best results, while regularized ridge regression works better. Different events have different characteristics, so it is better to separate them based on different features. However, it is tricky to deal with missing values, which has no meaning in physics. Plus, missing value would not be a problem if we separated based on them, which we think should be a better way to deal with missing value.
-
+\section{Result \& Discussion}
 The model gave us an accuracy of more than $80\%$ when tested by 4-fold cross validation locally. However the accuracy against test dataset only scored $77.748\%$ on Kaggle with ridge regression.
+
+
+Regularized logistic regression unexpectedly did not give us the best results, while regularized ridge regression works better. Different events have different characteristics, so it is better to separate them based on different features. However, it is tricky to deal with missing values, which has no meaning in physics. Plus, missing value would not be a problem if we separated based on them, which we think should be a better way to deal with missing value.
 
 
 \bibliographystyle{IEEEtran}
