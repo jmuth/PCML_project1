@@ -150,36 +150,16 @@ Polynomial basis functions can be used to construct more complex and more powerf
 
 \subsubsection{Least Squares}
 LS resolves the matrix equation between $x^T x \cdot w= x^T y $ to find w. Mathematicaly perfectly correct, its big drawback comes from it high sensitivity to outliers and multicollinear dataset, which is often the case when analysing real-world data.
-\subsubsection{Least Squares Gradient Descent}
-LSGD starts from a initial $w$ matrix and iteratively improves it depending of the gradient $g = \frac{x^T \cdot y-x w}{ \# variables}$. It presents the same weaknesses as LS but provides faster calculation, especially its stochastic variant explained below. 
-\subsubsection{Least Squares Stochastic Gradient Descent}
-Insted of calculating the whole gradient in each iteration as LSGD, LSSGD selects an arbitrary number of small random subsets and calculate the mean between all the their gradient. It's a fast variant of LSGD. The bias  introduced by working with small subsets is compensate by the iterative process.
+\subsubsection{Least Squares (Stochastic) Gradient Descent}
+LSGD starts from a initial $w$ matrix and iteratively improves it depending of the gradient $g = \frac{x^T \cdot y-x w}{ \# variables}$. It presents the same weaknesses as LS but provides faster calculation, especially its stochastic variant which select an arbitrary number of small random subsets and calculate the mean between all the their gradient.
 \subsubsection{Ridge Regression}
 RR add a regularization term $\lambda$ to the matrix $x^T x$ in order to counter the multicollinearity problem. This $\lambda$ is empirically defined.
-\subsubsection{Logistique Regression}
-LR is based on $\sigma(x) = \frac{e^x}{1 + e^x}$ function which better scales classification problem where $y$'s vector is composed of 
-\subsubsection{Regularized Logistique Regression}
+\subsubsection{(Regularized) Logistique Regression}
+LR is based on $\sigma(x) = \frac{e^x}{1 + e^x}$ function which better scales classification problem where $y$ vector is composed of binary solutions $\{0, 1\}$. It works in a iteratively way by improving $w$ through gradient calculation.
 
 
 
-\begin{table}[htbp]
-  \centering
-  \begin{tabular}[c]{| l | c | c | l | c | c |}
-    \hline
-    Method 	     & te\_loss & accuray \% \\
-    \hline
-    \hline 
-    Least Squares 			& 0.81		& 75.16	    \\
-    Least Squares GD 		& 0.84		& 72.70 	    \\
-    Least Squares SGD 		& 0.83		& 73.54	    \\
-    Ridge Regression 			& 0.82  		& 74.88	\\
-    Logistic Regression		& 666.42  		& 72.14 	\\
-    Regularized Logistic Regr.  	& 666.42  		& 72.14 	\\
-\hline
-  \end{tabular}
-  \caption{Benchmark of six different methods}
-  \label{tab:methods}
-\end{table}
+
 
 
 
@@ -212,13 +192,34 @@ LR is based on $\sigma(x) = \frac{e^x}{1 + e^x}$ function which better scales cl
 
 
 
-
+\subsection{Models comparison}
 
 
 
 
 
 We only considered ridge regression for linear regression models because optimal $w$ can be derived directly without gradient descent approximation. Ridge regression can also penalize overfitting caused by high polynomial degrees. We also tried logistic regression, which seems to be more suitable for such classification.
+
+
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}[c]{| l | c | c | l | c | c |}
+    \hline
+    Method 	     & te\_loss & accuray \% \\
+    \hline
+    \hline 
+    Least Squares 			& 0.81		& 75.16	    \\
+    Least Squares GD 		& 0.84		& 72.70 	    \\
+    Least Squares SGD 		& 0.83		& 73.54	    \\
+    Ridge Regression 			& 0.82  		& 74.88	\\
+    Logistic Regression		& 666.42  		& 72.14 	\\
+    Regularized Logistic Regr.  	& 666.42  		& 72.14 	\\
+\hline
+  \end{tabular}
+  \caption{Benchmark of six different models}
+  \label{tab:methods}
+\end{table}
+
 
 \subsection{Ridge Regression}
 We applied a 2-steps grid-search method on each of the eight groups for two parameters: \textbf{polynomial degree} $d \in [0, 15]$ and \textbf{regularization parameter} $\lambda \in [1^{-10}, 1]$.  Each pair of parameters is tested through a 4-fold cross-validation and scored by RMSE error. Figure \ref{param} shows the result. {\color{red}Once the best parameters are chosen for each subsets, we zoomed on them and applied again a grid-search on the zoomed interval, to gain precision}. Table \ref{tab:param} sums up the chosen parameters.
