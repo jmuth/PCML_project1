@@ -55,11 +55,11 @@ def run():
   # scaled between 0 (background) and 1 (Higgs)
   # used in logistic regression
   y_rescaled, x_rescaled, _ = helpers.load_csv_data('data/train.csv', sub_sample = True, background_value = 0)
-  x_rescaled = helpers.standardize(x_rescaled)
+  x_rescaled, _, _ = helpers.standardize(x_rescaled)
 
 
   # range parameter
-  gammas = np.linspace(start=0.000001, stop=1, num=10)
+  gammas = np.linspace(start=0.00001, stop=1, num=10)
   lambdas = np.logspace(start=-8, stop=0, num=10)
   max_iters = 10000
 
