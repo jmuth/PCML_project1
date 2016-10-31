@@ -3,6 +3,7 @@
 import csv
 import numpy as np
 from gradient import *
+import gradient
 
 
 def standardize(x, minX = None, rangeX = None):
@@ -160,7 +161,7 @@ def predict_labels(cut, weights, data, method='log'):
         y_pred (ndarray): an array of prediction results
     """
     if method == 'log':
-        y_pred = sigmoid(data @ weights)
+        y_pred = gradient.sigmoid(data @ weights)
     else:
         y_pred = np.dot(data, weights)
     y_pred[np.where(y_pred < cut)] = -1

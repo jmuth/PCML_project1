@@ -1,5 +1,8 @@
 import implementations
-# least squares GD
+import api
+import helpers
+import implementations
+import numpy as np
 
 def choose_best(cv, best):
     if cv[2] < best[2]:
@@ -43,9 +46,21 @@ def cross_validate_parameters(y, x, function_name, method_name,cut=0.5, gammas=N
 
 
 def run():
+
+  # load train set
+
+  # scaled between -1 (background) and 1 (Higgs)
+  y, x, _ = helpers.load_csv_data('data/train.csv', sub_sample = True, background_value = -1)
+
+  # scaled between 0 (background) and 1 (Higgs)
+  # used in logistic regression
+  y_rescaled, x_rescaled, _ = helpers.load_csv_data('data/train.csv', sub_sample = True, background_value = 0)
+  x_rescaled = helpers.standardize(x_rescaled)
+
+
   # range parameter
   gammas = np.linspace(start=0.000001, stop=1, num=10)
-  lambdas = np.logspace(start=-8, stop=10, num=10)
+  lambdas = np.logspace(start=-8, stop=0, num=10)
   max_iters = 10000
 
 
@@ -75,7 +90,8 @@ def run():
 
 
 
-if __name__ 
+if __name__ == '__main__':
+  run()
 
 
 
